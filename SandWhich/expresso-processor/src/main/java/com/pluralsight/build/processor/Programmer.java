@@ -1,20 +1,29 @@
 package com.pluralsight.build.processor;
 
-import com.pluralsight.build.annotation.menu.Menu;
 import com.pluralsight.build.annotation.system.OnShutDown;
 import com.pluralsight.build.annotation.system.OnStartUp;
 
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
+import javax.tools.JavaFileObject;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.*;
 
 public class Programmer {
     private Programmer(){}
+    static ProcessingEnvironment processingEnv;
     static RoundEnvironment roundEnv;
     static HashMap<Integer, List<ExecutableElement>> startUpWaves;
     static HashMap<Integer, List<ExecutableElement>> shutDownWaves;
+
+    static void init(ProcessingEnvironment processingEnv){
+        Programmer.processingEnv = processingEnv;
+        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Annotation Processor Triggered");
+    }
 
     static void plan (RoundEnvironment roundEnv){
         Programmer.roundEnv = roundEnv;
@@ -65,17 +74,32 @@ public class Programmer {
     }
 
     private static void writeMain(){
-        ArrayList<String> mainImports = new ArrayList<>();
-        //Load Main Path
-        {
+        try {
 
-            TypeElement mainMenu = (TypeElement) roundEnv.getElementsAnnotatedWith(Menu.class).stream()
-            .filter(element -> element.getAnnotation(Menu.class).isMain())
-            .findFirst()
-            .get();
+            JavaFileObject file = processingEnv.getFiler().createSourceFile("generated.ExpressoMain");
+            try(Writer writer = file.openWriter()){
 
-
+                writer.write("""
+                    package generated;
+                    public class GeneratedMain {
+                        public static void main(String[] args) {
+                            System.out.println("Generated!");
+                        }
+                    }
+                    """);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+//        ArrayList<String> mainImports = new ArrayList<>();
+//        //Load Main Path
+//        {
+//            TypeElement mainMenu = (TypeElement) roundEnv.getElementsAnnotatedWith(Menu.class).stream()
+//            .filter(element -> element.getAnnotation(Menu.class).isMain())
+//            .findFirst()
+//            .get();
+//
+//        }
 
     }
 }

@@ -9,6 +9,4 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Menu {
     boolean isMain() default false;
-    String overrideName() default "";
-    String overrideMainPackage() default "";
 }
