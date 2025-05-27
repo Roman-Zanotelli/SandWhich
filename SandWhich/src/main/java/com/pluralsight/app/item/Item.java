@@ -1,4 +1,4 @@
-package com.pluralsight.item;
+package com.pluralsight.app.item;
 
 public abstract class Item {
     private String name;

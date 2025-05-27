@@ -1,10 +1,9 @@
-package com.pluralsight.item;
+package com.pluralsight.app.item;
 
-import com.pluralsight.ingredient.Ingredient;
+import com.pluralsight.app.ingredient.Ingredient;
 
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 
 public final class Sandwich extends Item {
     private ArrayList<Ingredient> ingredientSelections;

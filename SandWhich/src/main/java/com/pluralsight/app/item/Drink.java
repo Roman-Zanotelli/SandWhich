@@ -1,6 +1,4 @@
-package com.pluralsight.item;
-
-import com.pluralsight.ingredient.Ingredient;
+package com.pluralsight.app.item;
 
 public class Drink extends Item{
     public Drink(String name) {
