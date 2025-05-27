@@ -6,7 +6,7 @@ import com.pluralsight.annotation.system.OnStartUp;
 @Deprecated
 public class Test {
 
-    @OnStartUp
+    @OnStartUp(wave = -1)
     public static void testStart(){
         System.out.println("Test Start");
     }
