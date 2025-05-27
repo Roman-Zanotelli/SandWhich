@@ -4,6 +4,7 @@ import com.pluralsight.annotation.system.OnStartUp;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
@@ -31,11 +32,11 @@ public class Programmer {
     static void plan (Set<? extends TypeElement> annotations, RoundEnvironment roundEnv){
         Programmer.roundEnv = roundEnv;
         //Handle OnStart Executables
-//        {
-//            roundEnv.getElementsAnnotatedWith(OnStartUp.class).stream()
-//                    .filter(element -> element.getKind() == ElementKind.METHOD)
-//                    .forEach(element -> planStartUp((ExecutableElement) element));
-//        }
+        {
+            roundEnv.getElementsAnnotatedWith(OnStartUp.class).stream()
+                    .filter(element -> element.getKind() == ElementKind.METHOD)
+                    .forEach(element -> planStartUp((ExecutableElement) element));
+        }
 //        //Handle OnShutDown Executables
 //        {
 //            roundEnv.getElementsAnnotatedWith(OnShutDown.class).stream()
@@ -87,11 +88,14 @@ public class Programmer {
 
             JavaFileObject file = processingEnv.getFiler().createSourceFile("com.pluralsight.generated.ExpressoMain");
             try(Writer writer = file.openWriter()){
-                writer.append("package com.pluralsight.generated;");
+                writer.append("""
+                        package com.pluralsight.generated;
+                        
+                        """);
                 //Append imports needed at the top of the file
                 mainImports.forEach(mainImport -> {
                     try {
-                        writer.append(mainImport);
+                        writer.append(mainImport+"\n");
                     } catch (IOException e) {
                         //This shouldn't happen
                         throw new RuntimeException(e);
@@ -100,6 +104,7 @@ public class Programmer {
 
                 //Append the start of the main class/function
                 writer.append("""
+                    
                     public class ExpressoMain {
                         public static void main(String[] args) {
                     """);
@@ -107,16 +112,14 @@ public class Programmer {
                 //Todo: Append startup logic with negative values
                 startUpWaves.entrySet().stream()
                         .filter(wave -> wave.getKey() < 0)
-                        .sorted(Comparator.comparing(Map.Entry::getKey))
-                        .forEach(wave -> {
-                            wave.getValue().forEach(s -> {
-                                try {
-                                    writer.append(s);
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            });
-                        });
+                        .sorted(Map.Entry.comparingByKey())
+                        .forEach(wave -> wave.getValue().forEach(s -> {
+                            try {
+                                writer.append("\t\t"+s+"\n");
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }));
                 //TODO: Add shutdown Hook
                 writer.append("""
                                 Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -124,10 +127,18 @@ public class Programmer {
                         """);
                 writer.append("""
                                 System.out.println("GoodBye From Expresso!!!");
-                            }));
+                                }));
                         """);
                 //TODO: Add normal start up logic
-
+                startUpWaves.entrySet().stream()
+                        .filter(wave -> wave.getKey() >= 0)
+                        .sorted(Map.Entry.comparingByKey()).forEach(wave -> wave.getValue().forEach(s -> {
+                            try {
+                                writer.append("\t\t"+s+"\n");
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }));
                 //Append Test logic
                 writer.append("""
                                 System.out.println("Hello From Expresso!!!");

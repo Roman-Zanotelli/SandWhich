@@ -10,6 +10,10 @@ public class Test {
     public static void testStart(){
         System.out.println("Test Start");
     }
+    @OnStartUp(wave = 1)
+    public static void testStart2(){
+        System.out.println("Test Start 2");
+    }
 
     @OnShutDown
     public static void testShutdown(){
