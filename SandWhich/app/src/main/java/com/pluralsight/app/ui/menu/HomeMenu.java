@@ -1,9 +1,9 @@
 package com.pluralsight.app.ui.menu;
 
 
-import com.pluralsight.build.annotation.menu.Menu;
-import com.pluralsight.build.annotation.menu.option.MenuOption;
-import com.pluralsight.build.annotation.menu.NextMenu;
+import com.pluralsight.annotation.menu.Menu;
+import com.pluralsight.annotation.menu.option.MenuOption;
+import com.pluralsight.annotation.menu.NextMenu;
 
 @Menu(isMain = true)
 public class HomeMenu {

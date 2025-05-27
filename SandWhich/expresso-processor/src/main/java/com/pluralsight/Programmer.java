@@ -1,12 +1,13 @@
-package com.pluralsight.build.processor;
+package com.pluralsight;
 
-import com.pluralsight.build.annotation.system.OnShutDown;
-import com.pluralsight.build.annotation.system.OnStartUp;
+import com.pluralsight.annotation.system.OnShutDown;
+import com.pluralsight.annotation.system.OnStartUp;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
@@ -17,31 +18,34 @@ public class Programmer {
     private Programmer(){}
     static ProcessingEnvironment processingEnv;
     static RoundEnvironment roundEnv;
+    static ArrayList<String> mainImports;
     static HashMap<Integer, List<ExecutableElement>> startUpWaves;
     static HashMap<Integer, List<ExecutableElement>> shutDownWaves;
 
     static void init(ProcessingEnvironment processingEnv){
         Programmer.processingEnv = processingEnv;
         processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Annotation Processor Triggered");
+        mainImports = new ArrayList<>();
     }
 
-    static void plan (RoundEnvironment roundEnv){
+    static void plan (Set<? extends TypeElement> annotations, RoundEnvironment roundEnv){
         Programmer.roundEnv = roundEnv;
+//        //Handle OnStart Executables
+//        {
+//            roundEnv.getElementsAnnotatedWith(OnStartUp.class).stream()
+//                    .filter(element -> element.getKind() == ElementKind.METHOD)
+//                    .sorted(Comparator.comparing(element -> element.getAnnotation(OnStartUp.class).wave()))
+//                    .forEach(element -> planStartUp((ExecutableElement) element));
+//        }
+//        //Handle OnShutDown Executables
+//        {
+//            roundEnv.getElementsAnnotatedWith(OnShutDown.class).stream()
+//                    .filter(element -> element.getKind() == ElementKind.METHOD)
+//                    .sorted(Comparator.comparing(element -> element.getAnnotation(OnShutDown.class).wave()))
+//                    .forEach(element -> planShutDown((ExecutableElement) element));
+//        }
 
-        //Handle OnStart Executables
-        {
-            roundEnv.getElementsAnnotatedWith(OnStartUp.class).stream()
-                    .filter(element -> element.getKind() == ElementKind.METHOD)
-                    .sorted(Comparator.comparing(element -> element.getAnnotation(OnStartUp.class).wave()))
-                    .forEach(element -> planStartUp((ExecutableElement) element));
-        }
-        //Handle OnShutDown Executables
-        {
-            roundEnv.getElementsAnnotatedWith(OnShutDown.class).stream()
-                    .filter(element -> element.getKind() == ElementKind.METHOD)
-                    .sorted(Comparator.comparing(element -> element.getAnnotation(OnShutDown.class).wave()))
-                    .forEach(element -> planShutDown((ExecutableElement) element));
-        }
+
         //Load Main Menu
         {
 
@@ -76,20 +80,41 @@ public class Programmer {
     private static void writeMain(){
         try {
 
-            JavaFileObject file = processingEnv.getFiler().createSourceFile("generated.ExpressoMain");
+            JavaFileObject file = processingEnv.getFiler().createSourceFile("com.pluralsight.generated.ExpressoMain");
             try(Writer writer = file.openWriter()){
+                writer.append("package com.pluralsight.generated;");
+                //Append imports needed at the top of the file
+                mainImports.forEach(mainImport -> {
+                    try {
+                        writer.append(mainImport);
+                    } catch (IOException e) {
+                        //This shouldn't happen
+                        throw new RuntimeException(e);
+                    }
+                });
 
-                writer.write("""
-                    package generated;
-                    public class GeneratedMain {
+                //Append the start of the main class/function
+                writer.append("""
+                    public class ExpressoMain {
                         public static void main(String[] args) {
-                            System.out.println("Generated!");
+                    """);
+
+                //TODO: Add shutdown Hook
+                //TODO: Add start up logic
+
+                //Append Test logic
+                writer.append("""
+                        System.out.println("Hello From Expresso!");
+                        """);
+
+                //Append the end of the main class
+                writer.append("""
                         }
                     }
                     """);
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException ignored) {
+
         }
 //        ArrayList<String> mainImports = new ArrayList<>();
 //        //Load Main Path

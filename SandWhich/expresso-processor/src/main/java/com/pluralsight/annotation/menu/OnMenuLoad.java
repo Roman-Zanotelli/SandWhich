@@ -1,12 +1,11 @@
-package com.pluralsight.build.annotation.menu.option;
+package com.pluralsight.annotation.menu;
 
 import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
-@Repeatable(OnOptionSelects.class)
-public @interface OnOptionSelect {
+@Repeatable(OnMenuLoads.class)
+public @interface OnMenuLoad {
     String menu();
-    String option();
     double wave() default 0;
 }

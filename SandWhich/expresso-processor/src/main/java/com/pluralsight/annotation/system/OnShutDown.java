@@ -1,4 +1,4 @@
-package com.pluralsight.build.annotation.system;
+package com.pluralsight.annotation.system;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
-public @interface OnStartUp {
+public @interface OnShutDown {
     double wave() default 0;
 }

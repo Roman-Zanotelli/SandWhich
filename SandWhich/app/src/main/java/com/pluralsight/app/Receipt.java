@@ -3,7 +3,7 @@ package com.pluralsight.app;
 import com.pluralsight.Logging;
 import com.pluralsight.app.item.Item;
 import com.pluralsight.app.ui.UserOutput;
-import com.pluralsight.build.annotation.system.OnStartUp;
+import com.pluralsight.annotation.system.OnStartUp;
 
 import javax.print.attribute.standard.Severity;
 import java.io.BufferedWriter;

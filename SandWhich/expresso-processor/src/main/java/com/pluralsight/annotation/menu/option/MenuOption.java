@@ -1,4 +1,4 @@
-package com.pluralsight.build.annotation.menu.option;
+package com.pluralsight.annotation.menu.option;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

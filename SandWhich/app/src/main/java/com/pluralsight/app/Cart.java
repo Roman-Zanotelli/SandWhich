@@ -6,8 +6,8 @@ import com.pluralsight.app.item.Chips;
 import com.pluralsight.app.item.Drink;
 import com.pluralsight.app.item.Item;
 import com.pluralsight.app.item.Sandwich;
-import com.pluralsight.build.annotation.menu.OnMenuLoad;
-import com.pluralsight.build.annotation.menu.option.OnOptionSelect;
+import com.pluralsight.annotation.menu.OnMenuLoad;
+import com.pluralsight.annotation.menu.option.OnOptionSelect;
 
 import java.util.ArrayList;
 import java.util.Comparator;
