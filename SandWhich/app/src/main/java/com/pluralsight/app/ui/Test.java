@@ -5,6 +5,9 @@ import com.pluralsight.annotation.menu.option.OnOptionSelect;
 import com.pluralsight.annotation.system.OnShutDown;
 import com.pluralsight.annotation.system.OnStartUp;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 @Deprecated
 public class Test {
 
@@ -30,5 +33,8 @@ public class Test {
     @OnMenuLoad(menu = "CheckOutMenu")
     public static void testImport(){
 
+    }
+    public static void testt(){
+        ArrayList<String> inputs = new ArrayList<>(Arrays.asList("a", "b", "c"));
     }
 }

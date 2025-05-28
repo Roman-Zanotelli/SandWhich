@@ -3,6 +3,7 @@ package com.pluralsight.component;
 import com.pluralsight.annotation.menu.Menu;
 import com.pluralsight.annotation.menu.OnMenuLoad;
 import com.pluralsight.annotation.menu.OnMenuLoads;
+import com.pluralsight.annotation.menu.SelectionPromt;
 import com.pluralsight.annotation.menu.option.MenuOption;
 import com.pluralsight.annotation.menu.option.OnOptionSelect;
 import com.pluralsight.annotation.menu.option.OnOptionSelects;
@@ -52,6 +53,8 @@ public class MenuGenerator {
             //Load imports
             {
                 menuImports.add("import java.util.Scanner;");
+                menuImports.add("import java.util.ArrayList;");
+                menuImports.add("import java.util.List;");
                 //ScannerProducer
                 {
                     roundEnv.getElementsAnnotatedWith(ScannerProducer.class).stream()
@@ -167,6 +170,9 @@ public class MenuGenerator {
                             throw new RuntimeException(e);
                         }
                     });
+                    String pkg = processingEnv.getElementUtils().getPackageOf(menuElement).toString();
+                    String className = menuElement.getSimpleName().toString();
+                   writer.append("import " + pkg + "." + className + ";\n");
                 }
 
                 //Append the start of the MenuClass
@@ -189,7 +195,21 @@ public class MenuGenerator {
                             + (usingScannerProducer.get() ?
                             roundEnv.getElementsAnnotatedWith(ScannerProducer.class).stream().findFirst().get().getSimpleName() : "ExpressoScanner")
                             + ".getScanner();\n");
-                    writer.append("\t\tString userSelection = \"default\";\n");
+                    writer.append(menuElement.getEnclosedElements().stream()
+                            .filter(element -> element.getAnnotation(MenuOption.class) != null)
+                            .map(element -> element.getAnnotation(MenuOption.class).key())
+                            .distinct().collect(Collectors.joining("\", \"", "\t\tArrayList<String> acceptedInputs = new ArrayList<>(List.of(\"", "\"));\n")));
+
+
+                    writer.append("\t\tString userSelection = \"\";\n")
+                        .append("\n\t\tdo {\n\t\t\t")
+                        .append(usingPrintOverride.get() ? roundEnv.getElementsAnnotatedWith(PrintOverride.class).stream().findFirst().get().getSimpleName().toString():"System.out")
+                        .append(".print(").append(menuElement.getEnclosedElements().stream()
+                            .filter(element -> element.getAnnotation(SelectionPromt.class) != null)
+                            .findFirst().map(element -> menuElement.getSimpleName().toString()+"."+element.getSimpleName().toString()+"")
+                            .orElse("\"Enter Selection: \""))
+                        .append(");\n")
+                        .append("\t\t\tuserSelection = scanner.nextLine();\n\t\t} while(!acceptedInputs.contains(userSelection));\n\n");
                 }
 
                 {
