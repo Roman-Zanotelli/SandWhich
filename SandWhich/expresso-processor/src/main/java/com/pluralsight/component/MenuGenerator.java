@@ -10,12 +10,14 @@ import com.pluralsight.annotation.menu.option.OnOptionSelects;
 import com.pluralsight.annotation.system.PrintOverride;
 import com.pluralsight.annotation.system.ScannerProducer;
 
+import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -185,31 +187,60 @@ public class MenuGenerator {
                             
                             """);
                 }
-                //TODO: Append OnLoad
+                //Display Menu
                 {
+                    menuElement.getEnclosedElements().stream()
+                            .filter(element -> element.getAnnotation(MenuOption.class) != null)
+                            .sorted(Comparator.comparing(element -> element.getAnnotation(MenuOption.class).order()))
+                            .forEach(element -> {
+                                try {
 
+                                    //Decide which print function to use
+                                    writer.append("\t\t").append(usingPrintOverride.get() ? roundEnv.getElementsAnnotatedWith(PrintOverride.class).stream().findFirst().get().getSimpleName().toString():"System.out");
+                                    //Invoke
+                                    MenuOption option = element.getAnnotation(MenuOption.class);
+                                    writer.append(".print(\"")
+                                            .append(option.key() + option.delimiter())
+                                            .append("\" + ")
+                                            .append(menuElement.getSimpleName().toString()+"."+element.getSimpleName().toString())
+                                            .append("+\"\\n\");\n");
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+
+                            });
                 }
-                //TODO: Scanner
+                //Scanner
                 {
+                    //Get the scanner
                     writer.append("\t\tScanner scanner = "
                             + (usingScannerProducer.get() ?
                             roundEnv.getElementsAnnotatedWith(ScannerProducer.class).stream().findFirst().get().getSimpleName() : "ExpressoScanner")
                             + ".getScanner();\n");
+
+                    //Generate a list of accepted inputs
                     writer.append(menuElement.getEnclosedElements().stream()
                             .filter(element -> element.getAnnotation(MenuOption.class) != null)
                             .map(element -> element.getAnnotation(MenuOption.class).key())
                             .distinct().collect(Collectors.joining("\", \"", "\t\tArrayList<String> acceptedInputs = new ArrayList<>(List.of(\"", "\"));\n")));
 
 
-                    writer.append("\t\tString userSelection = \"\";\n")
-                        .append("\n\t\tdo {\n\t\t\t")
-                        .append(usingPrintOverride.get() ? roundEnv.getElementsAnnotatedWith(PrintOverride.class).stream().findFirst().get().getSimpleName().toString():"System.out")
-                        .append(".print(").append(menuElement.getEnclosedElements().stream()
+                    //Initialize userSelection
+                    writer.append("\t\tString userSelection = \"\";\n");
+
+                    //Write do while loop
+                    writer.append("\n\t\tdo {\n\t\t\t");
+                    //Decide which print function to use
+                    writer.append(usingPrintOverride.get() ? roundEnv.getElementsAnnotatedWith(PrintOverride.class).stream().findFirst().get().getSimpleName().toString():"System.out");
+                    //Invoke
+                    writer.append(".print(");
+                    //Load selection prompt or default
+                    writer.append(menuElement.getEnclosedElements().stream()
                             .filter(element -> element.getAnnotation(SelectionPromt.class) != null)
                             .findFirst().map(element -> menuElement.getSimpleName().toString()+"."+element.getSimpleName().toString()+"")
-                            .orElse("\"Enter Selection: \""))
-                        .append(");\n")
-                        .append("\t\t\tuserSelection = scanner.nextLine();\n\t\t} while(!acceptedInputs.contains(userSelection));\n\n");
+                            .orElse("\"Enter Selection: \""));
+                    //Close Invocation and finish do while loop
+                    writer.append(");\n\t\t\tuserSelection = scanner.nextLine();\n\t\t} while(!acceptedInputs.contains(userSelection));\n\n");
                 }
 
                 {
@@ -233,8 +264,7 @@ public class MenuGenerator {
                             });
 
                     //Generate a default case
-                    writer.append("\n\t\t\tdefault -> {\n");
-                    writer.append("\n\t\t\t}\n");
+                    writer.append("\n\t\t\tdefault -> {\n\n\t\t\t}\n");
                     //Close the switch
                     writer.append("""
                                 
