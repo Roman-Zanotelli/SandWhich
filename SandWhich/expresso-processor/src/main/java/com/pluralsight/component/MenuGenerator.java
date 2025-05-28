@@ -4,6 +4,7 @@ import com.pluralsight.annotation.menu.*;
 import com.pluralsight.annotation.menu.option.MenuOption;
 import com.pluralsight.annotation.menu.option.OnOptionSelect;
 import com.pluralsight.annotation.menu.option.OnOptionSelects;
+import com.pluralsight.annotation.menu.option.PressEnterToContinue;
 import com.pluralsight.annotation.system.PrintOverride;
 import com.pluralsight.annotation.system.ScannerProducer;
 
@@ -51,6 +52,7 @@ public class MenuGenerator {
             ArrayList<String> menuImports = new ArrayList<>();
             AtomicBoolean usingScannerProducer = new AtomicBoolean(false);
             AtomicBoolean usingPrintOverride = new AtomicBoolean(false);
+            String printOverride = null;
 
             //Load imports
             {
@@ -192,7 +194,18 @@ public class MenuGenerator {
                             
                             """);
                 }
-
+                //Whitespace
+                {
+                    WhiteSpace ws = menuElement.getAnnotation(WhiteSpace.class);
+                    if(ws != null){
+                        //Decide which print function to use
+                        writer.append("\t\t").append(usingPrintOverride.get() ? roundEnv.getElementsAnnotatedWith(PrintOverride.class).stream().findFirst().get().getSimpleName().toString():"System.out");
+                        //Invoke
+                        writer.append(".print(\"\\n\".repeat(");
+                        writer.append(String.valueOf(ws.value()));
+                        writer.append("));");
+                    }
+                }
                 //OnMenuLoad
                 {
                     //Repeated
@@ -347,6 +360,22 @@ public class MenuGenerator {
                                             });
                                         }
 
+                                    }
+                                    //PressEnterToContinue
+                                    {
+                                        if(optionElement.getAnnotation(PressEnterToContinue.class) != null) {
+                                            //Decide which print function to use
+                                            writer.append("\n\t\t\t\t").append(usingPrintOverride.get() ? roundEnv.getElementsAnnotatedWith(PrintOverride.class).stream().findFirst().get().getSimpleName().toString():"System.out");
+                                            //Invoke
+                                            writer.append(".print(");
+                                            //Load selection prompt or default
+                                            writer.append(menuElement.getEnclosedElements().stream()
+                                                    .filter(element -> element.getAnnotation(PressEnterPrompt.class) != null)
+                                                    .findFirst().map(element -> element.getSimpleName().toString()+"")
+                                                    .orElse("\"Press Enter to Continue: \""));
+                                            writer.append(");\n");
+                                            writer.append("\t\t\t\tscanner.nextLine();\n");
+                                        }
                                     }
                                     //NextMenu Logic
                                     {
