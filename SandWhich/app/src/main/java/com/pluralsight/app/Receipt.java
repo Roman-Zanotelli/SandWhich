@@ -25,7 +25,7 @@ public class Receipt {
         String path = System.getenv("RECEIPT_FOLDER");
 
         //Use loaded path or default to resources
-        receiptFolder = Path.of(path != null ? path : "src/main/resources");
+        receiptFolder = Path.of(path != null ? path : "./receipts");
     }
 
     public static void process(ArrayList<Item> items){
@@ -63,8 +63,11 @@ public class Receipt {
                 }
             });
 
+            writer.append(String.format("\nTotal - %.2f", Cart.getTotal()));
+
             //Flush and close writer
             writer.close();
+            UserOutput.display(String.format("Receipt \"%s.txt\" saved to \"%s\"", timeStamp, recieptFile.getAbsolutePath()));
         } catch (IOException e) {
             //If file writer fails we need to shut down
             UserOutput.display("File Creation Failed! Shutting Down");
@@ -72,5 +75,6 @@ public class Receipt {
             Logging.log(Severity.ERROR, e, receiptFolder);
             System.exit(1);
         }
+
     }
 }

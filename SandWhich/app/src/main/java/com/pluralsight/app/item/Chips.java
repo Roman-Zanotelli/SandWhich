@@ -9,4 +9,8 @@ public class Chips extends Item{
     public double getPrice() {
         return 1.50;
     }
+    @Override
+    public String toString() {
+        return String.format("%s - $%.2f", this.name, this.getPrice());
+    }
 }

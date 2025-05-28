@@ -31,7 +31,7 @@ public final class Cart {
     @OnMenuLoad(menu = "CheckOutMenu", wave = 1)
     @OnMenuLoad(menu = "OrderMenu", wave = 1)
     public static void displayTotal(){
-        UserOutput.display("Cart Total: $"+getTotal());
+        if(!items.isEmpty())UserOutput.display("Cart Total: $"+getTotal());
     }
 
     public static double getTotal(){

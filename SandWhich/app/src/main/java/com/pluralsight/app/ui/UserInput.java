@@ -180,7 +180,7 @@ public final class UserInput {
         String name = scanner.nextLine();
         UserOutput.print("\n".repeat(5));
         if(name.isBlank()) return null;
-        return new Sandwich(name, size, ingredients);
+        return new Sandwich(name + " Sandwhich?", size, ingredients);
     }
 
 
