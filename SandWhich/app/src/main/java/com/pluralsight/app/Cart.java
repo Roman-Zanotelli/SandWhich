@@ -20,13 +20,13 @@ public final class Cart {
         items = new ArrayList<>();
     }
 
-    @OnMenuLoad(menu = "HomeMenu")
+    @OnMenuLoad(menu = "CheckOutMenu")
     @OnMenuLoad(menu = "OrderMenu")
     public static void displayEach(){
         items.forEach(UserOutput::display);
     }
 
-    @OnMenuLoad(menu = "HomeMenu", wave = 1)
+    @OnMenuLoad(menu = "CheckOutMenu", wave = 1)
     @OnMenuLoad(menu = "OrderMenu", wave = 1)
     public static void displayTotal(){
         UserOutput.display(getTotal());
@@ -65,6 +65,11 @@ public final class Cart {
         items.add(chips);
         UserOutput.display("Chips Added - " + chips.getName());
         sort();
+    }
+
+    @OnOptionSelect(menu = "OrderMenu", option = "remove_item")
+    public static void removeItem(){
+
     }
 
     @OnOptionSelect(menu = "CheckOutMenu", option = "confirm_order")
