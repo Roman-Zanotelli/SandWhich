@@ -1,5 +1,7 @@
 package com.pluralsight.app.ui;
 
+import com.pluralsight.annotation.menu.OnMenuLoad;
+import com.pluralsight.annotation.menu.option.OnOptionSelect;
 import com.pluralsight.annotation.system.OnShutDown;
 import com.pluralsight.annotation.system.OnStartUp;
 
@@ -25,4 +27,8 @@ public class Test {
         System.out.println("Test Shutdown");
     }
 
+    @OnMenuLoad(menu = "CheckOutMenu")
+    public static void testImport(){
+
+    }
 }
