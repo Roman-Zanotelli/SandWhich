@@ -8,6 +8,11 @@ public class Test {
 
     @OnStartUp(wave = -1)
     public static void testStart(){
+        String test = "";
+        switch (test){
+            case "blah" -> test = "";
+            default -> test = "blah";
+        }
         System.out.println("Test Start");
     }
     @OnStartUp(wave = 1)

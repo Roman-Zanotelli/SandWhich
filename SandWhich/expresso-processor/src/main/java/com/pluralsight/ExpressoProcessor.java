@@ -15,7 +15,7 @@ public class ExpressoProcessor extends AbstractProcessor {
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
-        Programmer.init(processingEnv);
+        Program.init(processingEnv);
     }
 
     @Override
@@ -25,9 +25,9 @@ public class ExpressoProcessor extends AbstractProcessor {
         }
         processingEnv.getMessager().printMessage(Diagnostic.Kind.MANDATORY_WARNING, ">> Expresso Processor Invoked");
         processingEnv.getMessager().printMessage(Diagnostic.Kind.MANDATORY_WARNING, ">> Planning Program");
-        Programmer.plan(annotations, roundEnv);
+        Program.plan(annotations, roundEnv);
         processingEnv.getMessager().printMessage(Diagnostic.Kind.MANDATORY_WARNING, ">> Writing Program");
-        Programmer.writeProgram();
+        Program.writeProgram();
         return true;
     }
 }
