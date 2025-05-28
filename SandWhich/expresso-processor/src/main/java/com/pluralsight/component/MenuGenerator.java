@@ -8,6 +8,8 @@ import com.pluralsight.annotation.menu.option.MenuOption;
 import com.pluralsight.annotation.menu.option.OnOptionSelect;
 import com.pluralsight.annotation.menu.option.OnOptionSelects;
 import com.pluralsight.annotation.system.OnStartUp;
+import com.pluralsight.annotation.system.PrintOverride;
+import com.pluralsight.annotation.system.ScannerProducer;
 
 import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;
@@ -49,6 +51,30 @@ public class MenuGenerator {
             ArrayList<String> menuImports = new ArrayList<>();
             //Load imports
             {
+                //ScannerProducer
+                {
+                    roundEnv.getElementsAnnotatedWith(ScannerProducer.class).stream()
+                            .findFirst()
+                            .ifPresent(producerElement -> {
+                                TypeElement enclosingElement = (TypeElement) producerElement.getEnclosingElement();
+                                String pkg = processingEnv.getElementUtils().getPackageOf(enclosingElement).toString();
+                                String className = enclosingElement.getSimpleName().toString();
+                                String imp = "import " + pkg + "." + className + ";";
+                                if (!menuImports.contains(imp)) menuImports.add(imp);
+                    });
+                }
+                //PrintOverride
+                {
+                    roundEnv.getElementsAnnotatedWith(PrintOverride.class).stream()
+                            .findFirst()
+                            .ifPresent(producerElement -> {
+                                TypeElement enclosingElement = (TypeElement) producerElement.getEnclosingElement();
+                                String pkg = processingEnv.getElementUtils().getPackageOf(enclosingElement).toString();
+                                String className = enclosingElement.getSimpleName().toString();
+                                String imp = "import " + pkg + "." + className + ";";
+                                if (!menuImports.contains(imp)) menuImports.add(imp);
+                            });
+                }
                 //Load OnMenuLoad[s]
                 {
                     //Repeated
