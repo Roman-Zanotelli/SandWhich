@@ -1,35 +1,16 @@
 package com.pluralsight.app.item;
 
 public class Drink extends Item{
-    public Drink(String name) {
-        super(name, 0);
+    public Drink(String name, Size size) {
+        super(name, size);
     }
 
-
-
-    public enum DrinkSize {
-        Small(2), Medium(2.5), Large(3);
-        final double price;
-        String selection;
-        final String options[] = new String[]{
-                "Pepsi",
-                "Mountain Dew",
-                "Sprite",
-                "RootBeer",
-                "Fruit Punch"
+    @Override
+    public double getPrice() {
+        return switch (this.size){
+            case Small -> 2;
+            case Medium -> 2.50;
+            case Large -> 3;
         };
-
-        DrinkSize(double price){
-            this.price = price;
-        }
-
-        public double getPrice() {
-            return price;
-        }
-
-        public String[] getOptions() {
-            return options;
-        }
-
     }
 }

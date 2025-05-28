@@ -30,7 +30,7 @@ public class Test {
         System.out.println("Test Shutdown");
     }
 
-    @OnMenuLoad(menu = "CheckOutMenu")
+    //@OnMenuLoad(menu = "CheckOutMenu")
     public static void testImport(){
 
     }

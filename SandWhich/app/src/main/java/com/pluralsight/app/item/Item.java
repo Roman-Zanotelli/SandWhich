@@ -2,16 +2,14 @@ package com.pluralsight.app.item;
 
 public abstract class Item {
     private String name;
-    protected double price;
-    protected Item(String name, double price){
+    protected Size size;
+    protected Item(String name, Size size){
         this.name = name;
-        this.price = price;
+        this.size = size;
     }
     public final String getName(){
         return name;
     }
 
-    public final double getPrice(){
-        return price;
-    }
+    public abstract double getPrice();
 }

@@ -1,11 +1,8 @@
 package com.pluralsight.app;
 
+import com.pluralsight.app.item.*;
 import com.pluralsight.app.ui.UserInput;
 import com.pluralsight.app.ui.UserOutput;
-import com.pluralsight.app.item.Chips;
-import com.pluralsight.app.item.Drink;
-import com.pluralsight.app.item.Item;
-import com.pluralsight.app.item.Sandwich;
 import com.pluralsight.annotation.menu.OnMenuLoad;
 import com.pluralsight.annotation.menu.option.OnOptionSelect;
 
@@ -23,13 +20,18 @@ public final class Cart {
     @OnMenuLoad(menu = "CheckOutMenu")
     @OnMenuLoad(menu = "OrderMenu")
     public static void displayEach(){
+        if(items.size() == 0) {
+            UserOutput.display("Empty Cart");
+            return;
+        }
+        UserOutput.display("Cart: ");
         items.forEach(UserOutput::display);
     }
 
     @OnMenuLoad(menu = "CheckOutMenu", wave = 1)
     @OnMenuLoad(menu = "OrderMenu", wave = 1)
     public static void displayTotal(){
-        UserOutput.display(getTotal());
+        UserOutput.display("Cart Total: $"+getTotal());
     }
 
     public static double getTotal(){
@@ -40,24 +42,56 @@ public final class Cart {
         items.sort(Comparator.comparing(Item::getName));
     }
 
-    @OnOptionSelect(menu = "OrderMenu", option = "add_sandwich")
-    public static void addSandwich(){
-        Sandwich sandwich = UserInput.promptSandwichSelection();
+
+    //Sandwich
+    private static void addSandwich(Sandwich sandwich){
         if(sandwich == null) return;
         items.add(sandwich);
         UserOutput.display("Sandwich Added - $" + sandwich.getPrice());
         sort();
     }
 
-    @OnOptionSelect(menu = "OrderMenu", option = "add_drink")
-    public static void addDrink(){
-        Drink drink = UserInput.promptDrinkSelection();
-        if(drink == null) return;
+    @OnOptionSelect(menu = "SandwichSizeMenu", option = "smallSandwich")
+    public static void addSmallSandwich(){
+        addSandwich(UserInput.promptSandwichSelection(Size.Small));
+    }
+
+    @OnOptionSelect(menu = "SandwichSizeMenu", option = "mediumSandwich")
+    public static void addMediumSandwich(){
+        addSandwich(UserInput.promptSandwichSelection(Size.Medium));
+    }
+
+    @OnOptionSelect(menu = "SandwichSizeMenu", option = "largeSandwich")
+    public static void addLargeSandwich(){
+        addSandwich(UserInput.promptSandwichSelection(Size.Large));
+    }
+
+
+    //Drink
+    private static void addDrink (Drink drink){
+        if (drink == null) return;
         items.add(drink);
         UserOutput.display("Drink Added - " + drink.getName());
         sort();
     }
 
+    @OnOptionSelect(menu = "DrinkSizeMenu", option = "smallDrink")
+    public static void addSmallDrink () {
+        addDrink(UserInput.promptDrinkSelection(Size.Small));
+    }
+
+    @OnOptionSelect(menu = "DrinkSizeMenu", option = "mediumDrink")
+    public static void addMediumDrink () {
+        addDrink(UserInput.promptDrinkSelection(Size.Medium));
+    }
+
+    @OnOptionSelect(menu = "DrinkSizeMenu", option = "largeDrink")
+    public static void addLargeDrink () {
+        addDrink(UserInput.promptDrinkSelection(Size.Large));
+    }
+
+
+    //Chips
     @OnOptionSelect(menu = "OrderMenu", option = "add_chips")
     public static void addChips(){
         Chips chips = UserInput.promptChipsSelection();
@@ -67,17 +101,27 @@ public final class Cart {
         sort();
     }
 
+
+    //Remove and item
     @OnOptionSelect(menu = "OrderMenu", option = "remove_item")
     public static void removeItem(){
-
+        int i = UserInput.promptItemRemoval(items);
+        if(i == -1){
+            UserOutput.display("Canceled!");
+            return;
+        }
+        UserOutput.display(items.remove(i).getName() + " Removed");
     }
 
+    //Checkout
     @OnOptionSelect(menu = "CheckOutMenu", option = "confirm_order")
     public static void checkOut(){
         Receipt.process(items);
         items.clear();
     }
 
+
+    //Clear cart
     @OnOptionSelect(menu = "OrderMenu", option = "cancel_order")
     @OnOptionSelect(menu = "CheckOutMenu", option = "cancel_order")
     public static void clear(){

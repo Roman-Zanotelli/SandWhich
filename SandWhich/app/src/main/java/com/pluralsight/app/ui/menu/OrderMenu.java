@@ -9,9 +9,11 @@ import com.pluralsight.annotation.menu.option.PressEnterToContinue;
 @Menu @WhiteSpace(5)
 public class OrderMenu {
 
+    @NextMenu(nextMenu = "SandwichSizeMenu")
     @MenuOption(key = "1", order = 0) @PressEnterToContinue
     public static final String add_sandwich = "Add Sandwich";
 
+    @NextMenu(nextMenu = "DrinkSizeMenu")
     @MenuOption(key = "2", order = 1) @PressEnterToContinue
     public static final String add_drink = "Add Drink";
 
