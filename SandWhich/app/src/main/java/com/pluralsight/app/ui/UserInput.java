@@ -7,6 +7,7 @@ import com.pluralsight.app.item.Sandwich;
 
 import java.util.Scanner;
 
+@ScannerProducer
 public final class UserInput {
 
     static Scanner scanner = new Scanner(System.in);
@@ -26,8 +27,8 @@ public final class UserInput {
         //TODO
         return null;
     }
-    
-    @ScannerProducer
+
+
     public static Scanner getScanner(){
         return scanner;
     }

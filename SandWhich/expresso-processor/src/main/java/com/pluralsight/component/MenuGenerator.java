@@ -1,13 +1,11 @@
 package com.pluralsight.component;
 
-import com.pluralsight.Program;
 import com.pluralsight.annotation.menu.Menu;
 import com.pluralsight.annotation.menu.OnMenuLoad;
 import com.pluralsight.annotation.menu.OnMenuLoads;
 import com.pluralsight.annotation.menu.option.MenuOption;
 import com.pluralsight.annotation.menu.option.OnOptionSelect;
 import com.pluralsight.annotation.menu.option.OnOptionSelects;
-import com.pluralsight.annotation.system.OnStartUp;
 import com.pluralsight.annotation.system.PrintOverride;
 import com.pluralsight.annotation.system.ScannerProducer;
 
@@ -17,7 +15,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static com.pluralsight.Program.processingEnv;
@@ -49,30 +47,38 @@ public class MenuGenerator {
         try {
             JavaFileObject file = processingEnv.getFiler().createSourceFile("com.pluralsight.generated.ExpressoGenerated"+menuElement.getSimpleName().toString());
             ArrayList<String> menuImports = new ArrayList<>();
+            AtomicBoolean usingScannerProducer = new AtomicBoolean(false);
+            AtomicBoolean usingPrintOverride = new AtomicBoolean(false);
             //Load imports
             {
+                menuImports.add("import java.util.Scanner;");
                 //ScannerProducer
                 {
                     roundEnv.getElementsAnnotatedWith(ScannerProducer.class).stream()
                             .findFirst()
                             .ifPresent(producerElement -> {
-                                TypeElement enclosingElement = (TypeElement) producerElement.getEnclosingElement();
-                                String pkg = processingEnv.getElementUtils().getPackageOf(enclosingElement).toString();
-                                String className = enclosingElement.getSimpleName().toString();
+                                String pkg = processingEnv.getElementUtils().getPackageOf(producerElement).toString();
+                                String className = producerElement.getSimpleName().toString();
                                 String imp = "import " + pkg + "." + className + ";";
                                 if (!menuImports.contains(imp)) menuImports.add(imp);
+                                usingScannerProducer.set(true);
                     });
+                    //If a scanner doesn't exist we generate our own helper class
+                    if(!usingScannerProducer.get()){
+                        ScannerGenerator.write();
+                        menuImports.add("com.pluralsight.generated.ExpressoScanner");
+                    }
                 }
                 //PrintOverride
                 {
                     roundEnv.getElementsAnnotatedWith(PrintOverride.class).stream()
                             .findFirst()
-                            .ifPresent(producerElement -> {
-                                TypeElement enclosingElement = (TypeElement) producerElement.getEnclosingElement();
-                                String pkg = processingEnv.getElementUtils().getPackageOf(enclosingElement).toString();
-                                String className = enclosingElement.getSimpleName().toString();
+                            .ifPresent(printOverrideElement -> {
+                                String pkg = processingEnv.getElementUtils().getPackageOf(printOverrideElement).toString();
+                                String className = printOverrideElement.getSimpleName().toString();
                                 String imp = "import " + pkg + "." + className + ";";
                                 if (!menuImports.contains(imp)) menuImports.add(imp);
+                                usingPrintOverride.set(true);
                             });
                 }
                 //Load OnMenuLoad[s]
@@ -106,7 +112,6 @@ public class MenuGenerator {
                                 return "import " + pkg + "." + className + ";";
                             }).filter(imp -> !menuImports.contains(imp)).forEach(menuImports::add);
                 }
-
                 //Load OnOptionSelect & OnOptionSelects
                 {
                     //Repeated
@@ -141,6 +146,7 @@ public class MenuGenerator {
 
                 }
             }
+            //Start Generating the file
             try(Writer writer = file.openWriter()){
                 //generate package
                 {
@@ -179,6 +185,10 @@ public class MenuGenerator {
                 }
                 //TODO: Scanner
                 {
+                    writer.append("\t\tScanner scanner = "
+                            + (usingScannerProducer.get() ?
+                            roundEnv.getElementsAnnotatedWith(ScannerProducer.class).stream().findFirst().get().getSimpleName() : "ExpressoScanner")
+                            + ".getScanner();\n");
                     writer.append("\t\tString userSelection = \"default\";\n");
                 }
 
