@@ -24,15 +24,12 @@ public class OrderMenu {
     @MenuOption(key = "4", order = 3) @PressEnterToContinue
     public static final String remove_item = "Remove Item";
 
-   // @MenuOption(key = "5", order = 4) @PressEnterToContinue
-    public static final String modify_item = "Modify Item";
-
     @PressEnterToContinue
-    @MenuOption(key = "6", order = 5) @NextMenu(nextMenu = "CheckOutMenu")
+    @MenuOption(key = "C", order = 4) @NextMenu(nextMenu = "CheckOutMenu")
     public static final String checkout_cart = "Checkout";
 
     @PressEnterToContinue
-    @MenuOption(key = "0", order = 6) @NextMenu(nextMenu = "HomeMenu")
+    @MenuOption(key = "X", order = 5) @NextMenu(nextMenu = "HomeMenu")
     public static final String cancel_order = "Cancel Order";
 
 

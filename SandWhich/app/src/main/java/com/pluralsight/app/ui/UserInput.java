@@ -120,7 +120,6 @@ public final class UserInput {
             if(selection != -1){
                 ingredients.add(ingredientSelection.get(selection));
                 UserOutput.display(ingredientSelection.get(selection).toString().replace("_", " ") + " Added!");
-
                 //Meat Logic
                 int selection2;
                 do {
@@ -150,7 +149,6 @@ public final class UserInput {
                 }while(selection2 != - 1);
             }
         }
-
         //Included Toppings Logic
         {
             int selection;
