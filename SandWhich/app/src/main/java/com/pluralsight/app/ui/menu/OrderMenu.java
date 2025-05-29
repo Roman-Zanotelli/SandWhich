@@ -1,5 +1,6 @@
 package com.pluralsight.app.ui.menu;
 
+import com.pluralsight.annotation.menu.Header;
 import com.pluralsight.annotation.menu.Menu;
 import com.pluralsight.annotation.menu.WhiteSpace;
 import com.pluralsight.annotation.menu.option.MenuOption;
@@ -23,7 +24,7 @@ public class OrderMenu {
     @MenuOption(key = "4", order = 3) @PressEnterToContinue
     public static final String remove_item = "Remove Item";
 
-    @MenuOption(key = "5", order = 4) @PressEnterToContinue
+   // @MenuOption(key = "5", order = 4) @PressEnterToContinue
     public static final String modify_item = "Modify Item";
 
     @PressEnterToContinue
@@ -33,5 +34,9 @@ public class OrderMenu {
     @PressEnterToContinue
     @MenuOption(key = "0", order = 6) @NextMenu(nextMenu = "HomeMenu")
     public static final String cancel_order = "Cancel Order";
+
+
+    @Header
+    public static final String header = "--- Order Menu ---";
 
 }

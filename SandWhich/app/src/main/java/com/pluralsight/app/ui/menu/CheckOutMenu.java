@@ -1,5 +1,6 @@
 package com.pluralsight.app.ui.menu;
 
+import com.pluralsight.annotation.menu.Header;
 import com.pluralsight.annotation.menu.Menu;
 import com.pluralsight.annotation.menu.WhiteSpace;
 import com.pluralsight.annotation.menu.option.MenuOption;
@@ -20,5 +21,8 @@ public class CheckOutMenu {
     @PressEnterToContinue
     @MenuOption(key = "X", order = 2) @NextMenu(nextMenu = "HomeMenu")
     public static final String cancel_order = "Cancel Order";
+
+    @Header
+    public static final String header = "--- Check Out Screen ---";
 
 }

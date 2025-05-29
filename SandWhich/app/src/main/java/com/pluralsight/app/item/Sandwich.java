@@ -31,4 +31,42 @@ public final class Sandwich extends Item {
                 .sorted(Comparator.comparing(Object::toString))
                 .map(ingredient -> String.format("\t%s - $%.2f\n", ingredient.toString().replace("_", " "), ingredient.getPrice(size))).collect(Collectors.joining()));
     }
+
+    public void removeCheese(String cheese){
+        if(!ingredientSelections.removeIf(ingredient -> ingredient instanceof Ingredient.Premium.ExtraCheese && ingredient.toString().equals(cheese))){
+            if(ingredientSelections.removeIf(ingredient -> ingredient instanceof Ingredient.Premium.Cheese && ingredient.toString().equals(cheese))){
+                Ingredient.Premium.Cheese swap = ingredientSelections.stream().filter(ingredient -> ingredient instanceof Ingredient.Premium.ExtraCheese).findFirst().map(ingredient -> Ingredient.Premium.Cheese.valueOf(ingredient.toString())).orElse(null);
+                if(swap != null) {
+                    //Swap
+                    ingredientSelections.add(swap);
+                    ingredientSelections.remove(Ingredient.Premium.ExtraCheese.valueOf(swap.toString()));
+                }
+            }
+        }
+    }
+    public void removeMeat(String meat){
+        if(!ingredientSelections.removeIf(ingredient -> ingredient instanceof Ingredient.Premium.ExtraMeat && ingredient.toString().equals(meat))){
+            if(ingredientSelections.removeIf(ingredient -> ingredient instanceof Ingredient.Premium.Meat && ingredient.toString().equals(meat))){
+                Ingredient.Premium.Meat swap = ingredientSelections.stream().filter(ingredient -> ingredient instanceof Ingredient.Premium.ExtraMeat).findFirst().map(ingredient -> Ingredient.Premium.Meat.valueOf(ingredient.toString())).orElse(null);
+                if(swap != null) {
+                    //Swap
+                    ingredientSelections.add(swap);
+                    ingredientSelections.remove(Ingredient.Premium.ExtraMeat.valueOf(swap.toString()));
+                }
+            }
+        }
+    }
+
+    public void removeIngredient(Ingredient ingredient){
+        ingredientSelections.remove(ingredient);
+    }
+    public boolean hasBread(){
+        return ingredientSelections.stream().anyMatch(ingredient -> ingredient instanceof Ingredient.Premium.Bread);
+    }
+    public boolean hasMeat(){
+        return ingredientSelections.stream().anyMatch(ingredient -> ingredient instanceof Ingredient.Premium.Meat);
+    }
+    public boolean hasCheese(){
+        return ingredientSelections.stream().anyMatch(ingredient -> ingredient instanceof Ingredient.Premium.Cheese);
+    }
 }

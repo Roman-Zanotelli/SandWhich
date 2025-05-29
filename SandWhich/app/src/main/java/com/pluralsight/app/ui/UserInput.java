@@ -29,7 +29,11 @@ public final class UserInput {
             int selection;
             do {
                 UserOutput.print("Please Select a Bread: ");
-                selection = scanner.nextInt();
+                try {
+                    selection = scanner.nextInt();
+                } catch (Exception e){
+                    selection = -777;
+                }
                 scanner.nextLine();
             } while (selection < -1 || selection >= ingredientSelection.size());
             UserOutput.print("\n".repeat(5));
@@ -53,7 +57,11 @@ public final class UserInput {
             int selection;
             do {
                 UserOutput.print("Please Select a Meat: ");
-                selection = scanner.nextInt();
+                try {
+                    selection = scanner.nextInt();
+                } catch (Exception e){
+                    selection = -777;
+                }
                 scanner.nextLine();
             } while (selection < -1 || selection >= ingredientSelection.size());
             UserOutput.print("\n".repeat(5));
@@ -73,7 +81,11 @@ public final class UserInput {
 
                     do {
                         UserOutput.print("Please Select a Meat: ");
-                        selection2 = scanner.nextInt();
+                        try {
+                            selection2 = scanner.nextInt();
+                        } catch (Exception e){
+                            selection2 = -777;
+                        }
                         scanner.nextLine();
                     } while (selection2 < -1 || selection2 >= ingredientSelection2.size());
                     UserOutput.print("\n".repeat(5));
@@ -97,7 +109,11 @@ public final class UserInput {
             int selection;
             do {
                 UserOutput.print("Please Select a Cheese: ");
-                selection = scanner.nextInt();
+                try {
+                    selection = scanner.nextInt();
+                } catch (Exception e){
+                    selection = -777;
+                }
                 scanner.nextLine();
             } while (selection < -1 || selection >= ingredientSelection.size());
             UserOutput.print("\n".repeat(5));
@@ -106,7 +122,7 @@ public final class UserInput {
                 UserOutput.display(ingredientSelection.get(selection).toString().replace("_", " ") + " Added!");
 
                 //Meat Logic
-                selection = -7;
+                int selection2;
                 do {
 
                     UserOutput.display(String.format("%s ExtraCheese - $%.2f", size.toString(), Ingredient.Premium.ExtraCheese.American.getPrice(size)));
@@ -118,16 +134,20 @@ public final class UserInput {
 
                     do {
                         UserOutput.print("Please Select a Cheese: ");
-                        selection = scanner.nextInt();
+                        try {
+                            selection2 = scanner.nextInt();
+                        } catch (Exception e){
+                            selection2 = -777;
+                        }
                         scanner.nextLine();
-                    } while (selection < -1 || selection >= ingredientSelection2.size());
+                    } while (selection2 < -1 || selection2 >= ingredientSelection2.size());
                     UserOutput.print("\n".repeat(5));
                     UserOutput.print("\n".repeat(5));
-                    if(selection != -1) {
-                        ingredients.add(ingredientSelection2.get(selection));
-                        UserOutput.display("Extra "+ingredientSelection2.get(selection).toString().replace("_", " ") + " Added!");
+                    if(selection2 != -1) {
+                        ingredients.add(ingredientSelection2.get(selection2));
+                        UserOutput.display("Extra "+ingredientSelection2.get(selection2).toString().replace("_", " ") + " Added!");
                     }
-                }while(selection != - 1);
+                }while(selection2 != - 1);
             }
         }
 
@@ -144,7 +164,11 @@ public final class UserInput {
 
                 do {
                     UserOutput.print("Please Select a Topping: ");
-                    selection = scanner.nextInt();
+                    try {
+                        selection = scanner.nextInt();
+                    } catch (Exception e){
+                        selection = -777;
+                    }
                     scanner.nextLine();
                 } while (selection < -1 || selection >= ingredientSelection.size());
                 UserOutput.print("\n".repeat(5));
@@ -167,7 +191,11 @@ public final class UserInput {
 
                 do {
                     UserOutput.print("Please Select a Sauce: ");
-                    selection = scanner.nextInt();
+                    try {
+                        selection = scanner.nextInt();
+                    } catch (Exception e){
+                        selection = -777;
+                    }
                     scanner.nextLine();
                 } while (selection < -1 || selection >= ingredientSelection.size());
                 UserOutput.print("\n".repeat(5));
@@ -186,9 +214,11 @@ public final class UserInput {
         UserOutput.print("Do you want that Toasted? (true/false)>> ");
         while (!scanner.hasNextBoolean()){
             UserOutput.print("Do you want that Toasted? (true/false) >> ");
+            scanner.nextLine();
         }
         isToasted = scanner.nextBoolean();
         scanner.nextLine();
+        if(ingredients.isEmpty()) return null;
         return new Sandwich(name + " Sandwhich?", size, ingredients, isToasted);
     }
 
@@ -214,7 +244,11 @@ public final class UserInput {
             int selection;
             do {
                 UserOutput.print("Please Select a Flavor: ");
-                selection = scanner.nextInt();
+                try {
+                    selection = scanner.nextInt();
+                } catch (Exception e){
+                    selection = -777;
+                }
                 scanner.nextLine();
             } while (selection < -1 || selection >= ingredientSelection.size());
             if(selection != -1) return new Drink(ingredientSelection.get(selection).toString().replace("_", " "), size);
@@ -236,7 +270,11 @@ public final class UserInput {
         int selection;
         do {
             UserOutput.print("Please Select a Flavor: ");
-            selection = scanner.nextInt();
+            try {
+                selection = scanner.nextInt();
+            } catch (Exception e){
+                selection = -777;
+            }
             scanner.nextLine();
         } while (selection < -1 || selection >= ingredientSelection.size());
         if(selection != -1) return new Chips(ingredientSelection.get(selection).toString().replace("_", " "));
@@ -252,109 +290,17 @@ public final class UserInput {
         int selection;
         do{
             UserOutput.print("Enter Selection: ");
-            selection = scanner.nextInt();
+            try {
+                selection = scanner.nextInt();
+            } catch (Exception e){
+                selection = -777;
+            }
             scanner.nextLine();
         }while (selection < -1 || selection >= items.size());
         return selection;
     }
 
-    public static int promptItemModificationSelection(ArrayList<Item> items){
-        UserOutput.print("\n".repeat(5));
-        for (int i = 0; i < items.size(); i++) {
-            UserOutput.display(String.format("%d : %s", i, items.get(i).getName()));
-        }
-        UserOutput.display("-1 : Cancel");
-        int selection;
-        do{
-            UserOutput.print("Enter Selection: ");
-            selection = scanner.nextInt();
-            scanner.nextLine();
-        }while (selection < -1 || selection >= items.size());
-        return selection;
-    }
 
-    public static Item promptItemModification(Item item){
-        if(item instanceof Sandwich){
-            return modifySandwich((Sandwich) item);
-        }else if(item instanceof Drink){
-            return modifyDrink((Drink) item);
-        } else if(item instanceof Chips){
-            return modifyChips((Chips) item);
-        }
-        return item;
-    }
-
-    private static Sandwich modifySandwich(Sandwich sandwich){
-
-        return sandwich;
-    }
-    private static Drink modifyDrink(Drink drink){
-        {
-            UserOutput.display("Change Drink Size:");
-            Size[] sizes = Size.values();
-            for (int i = 0; i < sizes.length; i++) {
-                UserOutput.display(String.format("%d : %s", i, sizes[i].toString().replace("_", " ")));
-            }
-            UserOutput.display("-1 : Same Size");
-            int selection;
-            do {
-                UserOutput.print("Please Select a Flavor: ");
-                selection = scanner.nextInt();
-                scanner.nextLine();
-            } while (selection < -1 || selection >= sizes.length);
-            UserOutput.print("\n".repeat(5));
-            if (selection != -1){
-                drink.changeSize(sizes[selection]);
-                UserOutput.display("Size Changed To " + sizes[selection].toString());
-            }else{
-                UserOutput.display("Size Unchanged");
-            }
-        }
-        {
-            UserOutput.display("Change Drink Flavor:");
-            ArrayList<DrinkSelection> ingredientSelection = Arrays.stream(DrinkSelection.values()).sorted(Comparator.comparing(Objects::toString)).collect(Collectors.toCollection(ArrayList::new));
-            for (int i = 0; i < ingredientSelection.size(); i++) {
-                UserOutput.display(String.format("%d : %s", i, ingredientSelection.get(i).toString().replace("_", " ")));
-            }
-            UserOutput.display("-1 : Same Flavor");
-
-            int selection;
-            do {
-                UserOutput.print("Please Select a Flavor: ");
-                selection = scanner.nextInt();
-                scanner.nextLine();
-            } while (selection < -1 || selection >= ingredientSelection.size());
-            if (selection != -1) {
-                drink.changeFlavor(ingredientSelection.get(selection).toString().replace("_", " "));
-                UserOutput.display("Flavor Changed To "+ingredientSelection.get(selection).toString().replace("_", " "));
-            }else{
-                UserOutput.display("Flavor Unchanged");
-            }
-        }
-        return drink;
-    }
-    private static Chips modifyChips(Chips chips){
-        UserOutput.display("Change Chips Flavor:");
-        ArrayList<ChipSelection> ingredientSelection = Arrays.stream(ChipSelection.values()).sorted(Comparator.comparing(Objects::toString)).collect(Collectors.toCollection(ArrayList::new));
-        for (int i = 0; i < ingredientSelection.size(); i++) {
-            UserOutput.display(String.format("%d : %s", i, ingredientSelection.get(i).toString().replace("_", " ")));
-        }
-        UserOutput.display("-1 : Same Flavor");
-
-        int selection;
-        do {
-            UserOutput.print("Please Select a Flavor: ");
-            selection = scanner.nextInt();
-            scanner.nextLine();
-        } while (selection < -1 || selection >= ingredientSelection.size());
-        if (selection != -1) {
-            chips.changeFlavor(ingredientSelection.get(selection).toString().replace("_", " "));
-            UserOutput.display("Flavor Changed To "+ingredientSelection.get(selection).toString().replace("_", " "));
-        }else{
-            UserOutput.display("Flavor Unchanged");
-        }
-        return chips;
-    }
 
     public static Scanner getScanner(){
         return scanner;

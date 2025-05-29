@@ -66,13 +66,6 @@ public final class Cart {
         addSandwich(UserInput.promptSandwichSelection(Size.Large));
     }
 
-    @OnOptionSelect(menu = "OrderMenu", option = "modify_item")
-    public static void modifyItem(){
-        int selection = UserInput.promptItemRemoval(items);
-        if(selection == -1) return;
-        items.add(UserInput.promptItemModification(items.remove(selection)));
-    }
-
 
     //Drink
     private static void addDrink (Drink drink){

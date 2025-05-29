@@ -1,11 +1,8 @@
 package com.pluralsight.app.ui.menu;
 
 
-import com.pluralsight.annotation.menu.Menu;
-import com.pluralsight.annotation.menu.SelectionPromt;
-import com.pluralsight.annotation.menu.WhiteSpace;
+import com.pluralsight.annotation.menu.*;
 import com.pluralsight.annotation.menu.option.MenuOption;
-import com.pluralsight.annotation.menu.NextMenu;
 import com.pluralsight.annotation.menu.option.PressEnterToContinue;
 
 @Menu(isMain = true) @WhiteSpace(5)
@@ -19,6 +16,9 @@ public class HomeMenu {
     @MenuOption(key = "0", order = 1)
     public static final String exit = "Exit";
 
-    @SelectionPromt @PressEnterToContinue
+    @SelectionPromt
     public static final String prompt = "Please Enter Option >> ";
+
+    @Header
+    public static final String header = "--- Home Screen ---";
 }

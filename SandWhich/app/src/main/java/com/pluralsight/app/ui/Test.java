@@ -25,7 +25,7 @@ public class Test {
         System.out.println("Test Start 2");
     }
 
-    @OnShutDown
+    //@OnShutDown
     public static void testShutdown(){
         System.out.println("Test Shutdown");
     }

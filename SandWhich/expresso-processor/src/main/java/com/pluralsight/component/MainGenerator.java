@@ -66,163 +66,6 @@ public class MainGenerator {
         if(!mainImports.contains(qualifiedImport)) mainImports.add(qualifiedImport);
     }
 
-
-    public static void writeV2(){
-        try {
-
-            //Create the main file
-            JavaFileObject file = processingEnv.getFiler().createSourceFile("com.pluralsight.generated.ExpressoMain");
-
-            //Open a writer
-            try(Writer writer = file.openWriter()){
-
-                //Append the package of the main class
-                {
-                    writer.append("""
-                            package com.pluralsight.generated;
-                            
-                            """);
-                }
-
-                //Append imports needed at the top of the file
-                {
-                mainImports.forEach(mainImport -> {
-                    try {
-                        writer.append(mainImport+"\n");
-                    } catch (IOException e) {
-                        //This shouldn't happen
-                        //TODO: Add something for when it does
-                        throw new RuntimeException(e);
-                    }
-                });
-                }
-
-                //Append the start of the main class/function
-                {
-                    writer.append("""
-                            
-                            public class ExpressoMain {
-                                public static void main(String[] args) {
-                            
-                            """);
-                }
-
-                //Append start up logic with negative wave (Before shutdown hook)
-                {
-                    startUpWaves.entrySet().stream()
-                            .filter(wave -> wave.getKey() < 0)
-                            .sorted(Map.Entry.comparingByKey())
-                            .forEach(wave -> wave.getValue().forEach(s -> {
-                                try {
-                                    writer.append("\t\t" + s + "\n");
-                                } catch (IOException e) {
-                                    //This shouldn't happen
-                                    //TODO: Add something for when it does
-                                    throw new RuntimeException(e);
-                                }
-                            }));
-                }
-
-                //Shut Down Hook
-                {
-                    writer.append("""
-                            
-                                    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                            
-                            """);
-                    shutDownWaves.entrySet().stream()
-                            .sorted(Map.Entry.comparingByKey()).forEach(wave -> wave.getValue().forEach(s -> {
-                                try {
-                                    writer.append("\t\t\t" + s + "\n");
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }));
-                    writer.append("""
-                            
-                                    }));
-                            
-                            """);
-                }
-
-                //Normal Start up Logic
-                {
-                    startUpWaves.entrySet().stream()
-                            .filter(wave -> wave.getKey() >= 0)
-                            .sorted(Map.Entry.comparingByKey()).forEach(wave -> wave.getValue().forEach(s -> {
-                                try {
-                                    writer.append("\t\t" + s + "\n");
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }));
-                }
-
-                //MenuLoop
-                {
-                    //Set the initial menu to the menu marked isMain
-                    writer.append("\t\tString currentMenu = \"").append(MenuGenerator.getMainMenu()).append("\";\n");
-
-                    //Generate while loop with switch case on current Menu
-                    writer.append("""
-                            
-                                    while(true){
-                                        switch(currentMenu){
-                                        
-                            """);
-
-                    MenuGenerator.getMenus().forEach(menu -> {
-                        try {
-                            //Generates "case GeneratedMenuClass -> {" for each generated menu class
-                            writer.append("\t\t\t\tcase \"").append(menu).append("\" -> {\n\t\t\t\t\t")
-                                    // Generates "String res = GeneratedMenuClass.load();" for each
-                                    .append("String res = ExpressoGenerated").append(menu).append(".load();\n\t\t\t\t\t")
-                                    //Generates code that sets the current menu to the next menu (if not null)
-                                    .append("currentMenu = (res != null) ? res : currentMenu;")
-                                    //Generates the closing "}" to the case
-                                    .append("\n\t\t\t\t}\n\n");
-                        } catch (IOException e) {
-                            //This shouldn't happen
-                            //TODO: Add something for when it does
-                            throw new RuntimeException(e);
-                        }
-                    });
-
-                    //Generate code to default back to the main menu
-                    writer.append("\t\t\t\t").append("default -> currentMenu = \"").append(MenuGenerator.getMainMenu()).append("\";\n");
-
-                    //Close while loop and switch case
-                    writer.append("""
-                                        
-                                        }
-                                    }
-                                    
-                            """);
-                }
-
-                //Append the end of the main class
-                {
-                    writer.append("""
-                                }
-                            }
-                            """);
-                }
-            }
-        } catch (IOException ignored) {
-
-        }
-//        ArrayList<String> mainImports = new ArrayList<>();
-//        //Load Main Path
-//        {
-//            TypeElement mainMenu = (TypeElement) roundEnv.getElementsAnnotatedWith(Menu.class).stream()
-//            .filter(element -> element.getAnnotation(Menu.class).isMain())
-//            .findFirst()
-//            .get();
-//
-//        }
-
-    }
-
     public static void write(){
         try {
 
@@ -233,65 +76,74 @@ public class MainGenerator {
             try(Writer writer = file.openWriter()){
                     writer.append(String.format("""
                             package com.pluralsight.generated;
-                           \s
+                            \s
+                            //Auto Generated Imports
                             %s
-                           \s
+                            \s
+                            //Auto Generated Main File :)
                             public class ExpressoMain {
-                           \s
+                            \s
                                 public static void main(String[] args) {
-                           \s
+                            \s
+                                    //Auto-Generated @OnStartUp(wave < 0) Elements
                             %s
-                           \s
+                            \s
+                                    //ShutDownHook
                                     Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                           \s
+                            \s
+                                    //Auto-Generated @OnShutDown Elements
                             %s
-                           \s
                                     }));
-                                   \s
+                                    \s
+                                    //Auto-Generated @OnStartUp(wave >= 0) Elements
                             %s
-                                   \s
+                                    \s
+                                    //Auto-Generated Default to First Found @Menu(isMain = true)
                                     String currentMenu = "%s";
                                     while(true){
                                         switch(currentMenu){
-                                       \s
+                                        \s
+                                            //Auto-Generated Menu-Cases
                             %s
+                                            //Default to MainMenu
                             %s
                                         }
                                     }
                                 }
-                            }         
-                           """,
+                            }
+                            """,
+                            //Main Imports
                             mainImports.stream().map(s -> s+"\n").collect(Collectors.joining()),
+                            //StartUp Waves < 0
                             startUpWaves.entrySet().stream()
                                     .filter(wave -> wave.getKey() < 0)
                                     .sorted(Map.Entry.comparingByKey())
                                     .map(wave -> wave.getValue().stream().map(s -> "\t\t"+s+"\n").collect(Collectors.joining()))
                                     .collect(Collectors.joining()),
+                            //ShutDown Waves
                             shutDownWaves.entrySet().stream()
                                     .sorted(Map.Entry.comparingByKey())
                                     .map(wave -> wave.getValue().stream().map(s -> "\t\t\t" + s + "\n").collect(Collectors.joining()))
                                     .collect(Collectors.joining()),
+                            //StartUp Waves >= 0
                             startUpWaves.entrySet().stream()
                                     .filter(wave -> wave.getKey() >= 0)
                                     .sorted(Map.Entry.comparingByKey())
                                     .map(wave -> wave.getValue().stream().map(s -> "\t\t" + s + "\n").collect(Collectors.joining()))
                                     .collect(Collectors.joining()),
+                            //Start at MainMenu
                             MenuGenerator.getMainMenu(),
+                            //Generate Cases for each Registered Menu
                             MenuGenerator.getMenus().stream().map(menu ->
                                 String.format("""
                                                         case "%s" -> {
                                                             String res = ExpressoGenerated%s.load();
                                                             currentMenu = (res != null) ? res : currentMenu;
                                                         }
-                                                        
                                         """, menu, menu)
                             ).collect(Collectors.joining()),
-                            String.format("""
-                                                    default -> currentMenu = "%s";
-                                    """, MenuGenerator.getMainMenu())
-
-
-
+                            //Default Case back to MainMenu
+                            String.format("\t\t\t\tdefault -> currentMenu = \"%s\";\t", MenuGenerator.getMainMenu())
                     ));
 
             }
