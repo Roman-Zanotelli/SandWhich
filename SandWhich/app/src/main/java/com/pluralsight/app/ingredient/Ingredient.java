@@ -57,7 +57,7 @@ public interface Ingredient {
         }
 
         public enum Bread implements Ingredient{
-            White, Wheat, Rye, Wrap;
+            White_Bread, Wheat_Bread, Rye_Bread, Wrap;
 
             @Override
             public double getPrice(Size size) {

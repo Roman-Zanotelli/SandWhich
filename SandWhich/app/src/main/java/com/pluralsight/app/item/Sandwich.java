@@ -9,11 +9,12 @@ import java.util.stream.Collectors;
 
 public final class Sandwich extends Item {
     private ArrayList<Ingredient> ingredientSelections;
+    private boolean isToasted;
 
-    public Sandwich(String name, Size size, ArrayList<Ingredient> ingredients){
-
+    public Sandwich(String name, Size size, ArrayList<Ingredient> ingredients, boolean toasted){
         super(name, size);
         ingredientSelections = ingredients;
+        this.isToasted = toasted;
     }
 
     @Override
@@ -23,7 +24,7 @@ public final class Sandwich extends Item {
 
     @Override
     public String toString() {
-        return  String.format("%s\n%s",super.toString(), ingredientSelections.stream()
+        return  String.format("%s%s\n%s", isToasted ? "Toasted " :"", super.toString(), ingredientSelections.stream()
                 //Option to sort by Ingredient Price
                 //.sorted(Comparator.comparing(ingredient -> ingredient.getPrice(size)))
                 //Option to sort by Ingredient Name

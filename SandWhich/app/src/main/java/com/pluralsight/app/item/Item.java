@@ -7,9 +7,10 @@ public abstract class Item {
         this.name = name;
         this.size = size;
     }
-    public final String getName(){
+    public String getName(){
         return name;
     }
+    public final Size getSize(){return size;}
 
     public abstract double getPrice();
 

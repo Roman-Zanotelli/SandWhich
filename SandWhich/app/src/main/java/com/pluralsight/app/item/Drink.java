@@ -14,5 +14,8 @@ public class Drink extends Item{
         };
     }
 
-
+    @Override
+    public String getName() {
+        return String.format("%s %s", super.getSize().toString(), super.getName());
+    }
 }

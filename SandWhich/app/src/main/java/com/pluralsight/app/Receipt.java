@@ -49,11 +49,11 @@ public class Receipt {
             String timeStamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-hhmmss"));
             File recieptFile = receiptFolder.resolve(timeStamp + ".txt").toFile();
             BufferedWriter writer = new BufferedWriter(new FileWriter(recieptFile));
-
+            writer.append("Time - ").append(timeStamp).append("\n");
             //Append each item onto the file
             items.forEach(item -> {
                 try {
-                    writer.append(item.toString());
+                    writer.append("\n\t").append(item.toString().replace("\t","\t\t"));
                 } catch (IOException e) {
                     //If file writer fails we need to shut down
                     UserOutput.display("File Write Failed! Shutting Down");
@@ -62,9 +62,7 @@ public class Receipt {
                     System.exit(1);
                 }
             });
-
-            writer.append(String.format("\nTotal - %.2f", Cart.getTotal()));
-
+            writer.append("\nTotal - $").append(String.valueOf(Cart.getTotal())).append("\n");
             //Flush and close writer
             writer.close();
             UserOutput.display(String.format("Receipt \"%s.txt\" saved to \"%s\"", timeStamp, recieptFile.getAbsolutePath()));
