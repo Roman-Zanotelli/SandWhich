@@ -258,6 +258,104 @@ public final class UserInput {
         return selection;
     }
 
+    public static int promptItemModificationSelection(ArrayList<Item> items){
+        UserOutput.print("\n".repeat(5));
+        for (int i = 0; i < items.size(); i++) {
+            UserOutput.display(String.format("%d : %s", i, items.get(i).getName()));
+        }
+        UserOutput.display("-1 : Cancel");
+        int selection;
+        do{
+            UserOutput.print("Enter Selection: ");
+            selection = scanner.nextInt();
+            scanner.nextLine();
+        }while (selection < -1 || selection >= items.size());
+        return selection;
+    }
+
+    public static Item promptItemModification(Item item){
+        if(item instanceof Sandwich){
+            return modifySandwich((Sandwich) item);
+        }else if(item instanceof Drink){
+            return modifyDrink((Drink) item);
+        } else if(item instanceof Chips){
+            return modifyChips((Chips) item);
+        }
+        return item;
+    }
+
+    private static Sandwich modifySandwich(Sandwich sandwich){
+
+        return sandwich;
+    }
+    private static Drink modifyDrink(Drink drink){
+        {
+            UserOutput.display("Change Drink Size:");
+            Size[] sizes = Size.values();
+            for (int i = 0; i < sizes.length; i++) {
+                UserOutput.display(String.format("%d : %s", i, sizes[i].toString().replace("_", " ")));
+            }
+            UserOutput.display("-1 : Same Size");
+            int selection;
+            do {
+                UserOutput.print("Please Select a Flavor: ");
+                selection = scanner.nextInt();
+                scanner.nextLine();
+            } while (selection < -1 || selection >= sizes.length);
+            UserOutput.print("\n".repeat(5));
+            if (selection != -1){
+                drink.changeSize(sizes[selection]);
+                UserOutput.display("Size Changed To " + sizes[selection].toString());
+            }else{
+                UserOutput.display("Size Unchanged");
+            }
+        }
+        {
+            UserOutput.display("Change Drink Flavor:");
+            ArrayList<DrinkSelection> ingredientSelection = Arrays.stream(DrinkSelection.values()).sorted(Comparator.comparing(Objects::toString)).collect(Collectors.toCollection(ArrayList::new));
+            for (int i = 0; i < ingredientSelection.size(); i++) {
+                UserOutput.display(String.format("%d : %s", i, ingredientSelection.get(i).toString().replace("_", " ")));
+            }
+            UserOutput.display("-1 : Same Flavor");
+
+            int selection;
+            do {
+                UserOutput.print("Please Select a Flavor: ");
+                selection = scanner.nextInt();
+                scanner.nextLine();
+            } while (selection < -1 || selection >= ingredientSelection.size());
+            if (selection != -1) {
+                drink.changeFlavor(ingredientSelection.get(selection).toString().replace("_", " "));
+                UserOutput.display("Flavor Changed To "+ingredientSelection.get(selection).toString().replace("_", " "));
+            }else{
+                UserOutput.display("Flavor Unchanged");
+            }
+        }
+        return drink;
+    }
+    private static Chips modifyChips(Chips chips){
+        UserOutput.display("Change Chips Flavor:");
+        ArrayList<ChipSelection> ingredientSelection = Arrays.stream(ChipSelection.values()).sorted(Comparator.comparing(Objects::toString)).collect(Collectors.toCollection(ArrayList::new));
+        for (int i = 0; i < ingredientSelection.size(); i++) {
+            UserOutput.display(String.format("%d : %s", i, ingredientSelection.get(i).toString().replace("_", " ")));
+        }
+        UserOutput.display("-1 : Same Flavor");
+
+        int selection;
+        do {
+            UserOutput.print("Please Select a Flavor: ");
+            selection = scanner.nextInt();
+            scanner.nextLine();
+        } while (selection < -1 || selection >= ingredientSelection.size());
+        if (selection != -1) {
+            chips.changeFlavor(ingredientSelection.get(selection).toString().replace("_", " "));
+            UserOutput.display("Flavor Changed To "+ingredientSelection.get(selection).toString().replace("_", " "));
+        }else{
+            UserOutput.display("Flavor Unchanged");
+        }
+        return chips;
+    }
+
     public static Scanner getScanner(){
         return scanner;
     }

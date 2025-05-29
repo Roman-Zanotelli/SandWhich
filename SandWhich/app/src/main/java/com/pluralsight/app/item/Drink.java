@@ -18,4 +18,11 @@ public class Drink extends Item{
     public String getName() {
         return String.format("%s %s", super.getSize().toString(), super.getName());
     }
+
+    public void changeFlavor(String name){
+        this.name = name;
+    }
+    public void changeSize(Size size){
+        this.size = size;
+    }
 }

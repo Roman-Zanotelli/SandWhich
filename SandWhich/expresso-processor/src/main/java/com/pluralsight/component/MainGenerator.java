@@ -10,6 +10,7 @@ import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.pluralsight.Program.*;
 
@@ -66,7 +67,7 @@ public class MainGenerator {
     }
 
 
-    public static void write(){
+    public static void writeV2(){
         try {
 
             //Create the main file
@@ -220,5 +221,82 @@ public class MainGenerator {
 //
 //        }
 
+    }
+
+    public static void write(){
+        try {
+
+            //Create the main file
+            JavaFileObject file = processingEnv.getFiler().createSourceFile("com.pluralsight.generated.ExpressoMain");
+
+            //Open a writer
+            try(Writer writer = file.openWriter()){
+                    writer.append(String.format("""
+                            package com.pluralsight.generated;
+                           \s
+                            %s
+                           \s
+                            public class ExpressoMain {
+                           \s
+                                public static void main(String[] args) {
+                           \s
+                            %s
+                           \s
+                                    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                           \s
+                            %s
+                           \s
+                                    }));
+                                   \s
+                            %s
+                                   \s
+                                    String currentMenu = "%s";
+                                    while(true){
+                                        switch(currentMenu){
+                                       \s
+                            %s
+                            %s
+                                        }
+                                    }
+                                }
+                            }         
+                           """,
+                            mainImports.stream().map(s -> s+"\n").collect(Collectors.joining()),
+                            startUpWaves.entrySet().stream()
+                                    .filter(wave -> wave.getKey() < 0)
+                                    .sorted(Map.Entry.comparingByKey())
+                                    .map(wave -> wave.getValue().stream().map(s -> "\t\t"+s+"\n").collect(Collectors.joining()))
+                                    .collect(Collectors.joining()),
+                            shutDownWaves.entrySet().stream()
+                                    .sorted(Map.Entry.comparingByKey())
+                                    .map(wave -> wave.getValue().stream().map(s -> "\t\t\t" + s + "\n").collect(Collectors.joining()))
+                                    .collect(Collectors.joining()),
+                            startUpWaves.entrySet().stream()
+                                    .filter(wave -> wave.getKey() >= 0)
+                                    .sorted(Map.Entry.comparingByKey())
+                                    .map(wave -> wave.getValue().stream().map(s -> "\t\t" + s + "\n").collect(Collectors.joining()))
+                                    .collect(Collectors.joining()),
+                            MenuGenerator.getMainMenu(),
+                            MenuGenerator.getMenus().stream().map(menu ->
+                                String.format("""
+                                                        case "%s" -> {
+                                                            String res = ExpressoGenerated%s.load();
+                                                            currentMenu = (res != null) ? res : currentMenu;
+                                                        }
+                                                        
+                                        """, menu, menu)
+                            ).collect(Collectors.joining()),
+                            String.format("""
+                                                    default -> currentMenu = "%s";
+                                    """, MenuGenerator.getMainMenu())
+
+
+
+                    ));
+
+            }
+        } catch (IOException ignored) {
+
+        }
     }
 }
