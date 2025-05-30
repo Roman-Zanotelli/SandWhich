@@ -17,6 +17,9 @@ public final class Cart {
         items = new ArrayList<>();
     }
 
+    public static void add(Item item){
+        items.add(item);
+    }
     @OnMenuLoad(menu = "CheckOutMenu")
     @OnMenuLoad(menu = "OrderMenu")
     public static void displayEach(){

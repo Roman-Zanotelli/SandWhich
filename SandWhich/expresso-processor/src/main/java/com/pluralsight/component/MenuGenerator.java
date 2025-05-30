@@ -220,23 +220,23 @@ public class MenuGenerator {
                         //Class Name
                         menuName,
                         //White Space
-                        getWhitSpaceString(menuElement, usingPrintOverride.get()),
+                        Generators.getWhitSpaceString(menuElement, usingPrintOverride.get()),
                         //Menu Header
-                        getMenuHeader(menuElement, menuName, usingPrintOverride.get()),
+                        Generators.getMenuHeader(menuElement, menuName, usingPrintOverride.get()),
                         //OnLoad
-                        getOnMenuLoadString(menuName),
+                        Generators.getOnMenuLoadString(menuName),
                         //Display
-                        getDisplayString(menuElement, menuName, usingPrintOverride.get()),
+                        Generators.getDisplayString(menuElement, menuName, usingPrintOverride.get()),
                         //Scanner
-                        getScannerString(menuElement, menuName, usingScannerProducer.get()),
+                        Generators.getScannerString(menuElement, menuName, usingScannerProducer.get()),
                         //Accepted Inputs
-                        getAcceptedInputsString(menuElement),
+                        Generators.getAcceptedInputsString(menuElement),
                         //Print Override
-                        getPrintOvverideString(usingPrintOverride.get()),
+                        Generators.getPrintOvverideString(usingPrintOverride.get()),
                         //Load Prompt
-                        getPromptString(menuElement, menuName),
+                        Generators.getPromptString(menuElement, menuName),
                         //Generate cases
-                        getCasesString(menuElement, menuName, usingPrintOverride.get())
+                        Generators.getCasesString(menuElement, menuName, usingPrintOverride.get())
 
                 ));
             }
@@ -245,163 +245,171 @@ public class MenuGenerator {
         }
 
     }
-    private static String getPromptString(TypeElement menuElement, String menuName){
-        return menuElement.getEnclosedElements().stream()
-                .filter(element -> element.getAnnotation(SelectionPromt.class) != null)
-                .findFirst().map(element -> menuName+"."+element.getSimpleName().toString())
-                .orElse("\"Enter Selection: \"");
-    }
-    private static String getPrintOvverideString(boolean usingPrintOverride){
-        return usingPrintOverride ?
-                roundEnv.getElementsAnnotatedWith(PrintOverride.class).stream().findFirst().get().getSimpleName().toString() :
-                "System.out";
-    }
-    private static String getAcceptedInputsString(TypeElement menuElement){
-        return menuElement.getEnclosedElements().stream()
-                .filter(element -> element.getAnnotation(MenuOption.class) != null)
-                .map(element -> element.getAnnotation(MenuOption.class).key())
-                .distinct()
-                .collect(Collectors.joining("\", \""));
-    }
-    private static String getScannerString(TypeElement menuElement, String menuName, boolean usingScannerProducer){
-        return usingScannerProducer?
-                roundEnv.getElementsAnnotatedWith(ScannerProducer.class).stream().findFirst().get().getSimpleName().toString() :
-                "ExpressoScanner";
-    }
-    private static String getDisplayString(TypeElement menuElement, String menuName, boolean usingPrintOverride){
-        return menuElement.getEnclosedElements().stream()
-                .filter(element -> element.getAnnotation(MenuOption.class) != null)
-                .sorted(Comparator.comparing(element -> element.getAnnotation(MenuOption.class).order()))
-                .map(element -> {
-                    MenuOption option = element.getAnnotation(MenuOption.class);
-                    return String.format(
-                            "\t\t%s.print(\"%s%s\" + %s.%s +\"\\n\");\n",
+    private static class Generators {
+        private static String getPromptString(TypeElement menuElement, String menuName) {
+            return menuElement.getEnclosedElements().stream()
+                    .filter(element -> element.getAnnotation(SelectionPromt.class) != null)
+                    .findFirst().map(element -> menuName + "." + element.getSimpleName().toString())
+                    .orElse("\"Enter Selection: \"");
+        }
+
+        private static String getPrintOvverideString(boolean usingPrintOverride) {
+            return usingPrintOverride ?
+                    roundEnv.getElementsAnnotatedWith(PrintOverride.class).stream().findFirst().get().getSimpleName().toString() :
+                    "System.out";
+        }
+
+        private static String getAcceptedInputsString(TypeElement menuElement) {
+            return menuElement.getEnclosedElements().stream()
+                    .filter(element -> element.getAnnotation(MenuOption.class) != null)
+                    .map(element -> element.getAnnotation(MenuOption.class).key())
+                    .distinct()
+                    .collect(Collectors.joining("\", \""));
+        }
+
+        private static String getScannerString(TypeElement menuElement, String menuName, boolean usingScannerProducer) {
+            return usingScannerProducer ?
+                    roundEnv.getElementsAnnotatedWith(ScannerProducer.class).stream().findFirst().get().getSimpleName().toString() :
+                    "ExpressoScanner";
+        }
+
+        private static String getDisplayString(TypeElement menuElement, String menuName, boolean usingPrintOverride) {
+            return menuElement.getEnclosedElements().stream()
+                    .filter(element -> element.getAnnotation(MenuOption.class) != null)
+                    .sorted(Comparator.comparing(element -> element.getAnnotation(MenuOption.class).order()))
+                    .map(element -> {
+                        MenuOption option = element.getAnnotation(MenuOption.class);
+                        return String.format(
+                                "\t\t%s.print(\"%s%s\" + %s.%s +\"\\n\");\n",
+                                usingPrintOverride ?
+                                        roundEnv.getElementsAnnotatedWith(PrintOverride.class).stream().findFirst().get().getSimpleName().toString() :
+                                        "System.out",
+                                option.key(),
+                                option.delimiter(),
+                                menuName,
+                                element.getSimpleName().toString()
+                        );
+                    }).collect(Collectors.joining());
+        }
+
+        private static String getWhitSpaceString(TypeElement menuElement, boolean usingPrintOverride) {
+            WhiteSpace ws = menuElement.getAnnotation(WhiteSpace.class);
+            if (ws != null) {
+                return String.format(
+                        "\t\t%s.print(\"\\n\".repeat(%s));",
+                        usingPrintOverride ?
+                                roundEnv.getElementsAnnotatedWith(PrintOverride.class).stream()
+                                        .findFirst()
+                                        .get()
+                                        .getSimpleName()
+                                        .toString() :
+                                "System.out",
+                        ws.value()
+                );
+            }
+            return "";
+        }
+
+        private static String getOnMenuLoadString(String menuName) {
+            //Repeated
+            return roundEnv.getElementsAnnotatedWith(OnMenuLoads.class).stream()
+                    //Filter annotations relevant to menu
+                    .filter(element -> Arrays.stream(element.getAnnotation(OnMenuLoads.class).value()).anyMatch(onMenuLoad -> onMenuLoad.menu().equals(menuName)))
+                    //Sort by menu wave
+                    .sorted(Comparator.comparing(element -> Arrays.stream(element.getAnnotation(OnMenuLoads.class).value()).filter(onMenuLoad -> onMenuLoad.menu().equals(menuName)).findFirst().get().wave()))
+                    .map(onLoadElement -> String.format("\t\t%s.%s();\n", onLoadElement.getEnclosingElement().getSimpleName().toString(), onLoadElement.getSimpleName().toString()))
+                    .collect(Collectors.joining()) + roundEnv.getElementsAnnotatedWith(OnMenuLoad.class).stream()
+                    //Filter annotations relevant to menu
+                    .filter(element -> element.getAnnotation(OnMenuLoad.class).menu().equals(menuName))
+                    //Sort by menu wave
+                    .sorted(Comparator.comparing(element -> element.getAnnotation(OnMenuLoad.class).wave()))
+                    .map(onLoadElement -> String.format("\t\t%s.%s();\n", onLoadElement.getEnclosingElement().getSimpleName().toString(), onLoadElement.getSimpleName().toString()))
+                    .collect(Collectors.joining());
+
+        }
+
+
+        private static String getCasesString(TypeElement menuElement, String menuName, boolean usingPrintOverride) {
+            return menuElement.getEnclosedElements().stream()
+                    .filter(element -> element.getAnnotation(MenuOption.class) != null)
+                    .map(optionElement -> {
+                        MenuOption option = optionElement.getAnnotation(MenuOption.class);
+                        return String.format(
+                                "\n\t\t\tcase \"%s\" -> {\n%s\n%s\n%s\n\t\t\t}",
+                                option.key(),
+                                getOptionSelectString(optionElement, menuName),
+                                getPressEnterString(menuElement, optionElement, usingPrintOverride),
+                                getNextMenuString(optionElement)
+                        );
+                    }).collect(Collectors.joining());
+        }
+
+
+        private static <T extends Element> String getOptionSelectString(T optionElement, String menuName) {
+            return roundEnv.getElementsAnnotatedWith(OnOptionSelects.class).stream()
+                    .filter(element -> {
+                        OnOptionSelects annotation = element.getAnnotation(OnOptionSelects.class);
+                        return Arrays.stream(annotation.value()).anyMatch(onOptionSelect -> onOptionSelect.menu().equals(menuName) && onOptionSelect.option().equals(optionElement.getSimpleName().toString()));
+                    })
+                    .sorted(Comparator.comparing(element -> Arrays.stream(element.getAnnotation(OnOptionSelects.class).value()).filter(onOptionSelect -> onOptionSelect.menu().equals(menuName) && onOptionSelect.option().equals(optionElement.getSimpleName().toString())).findFirst().get().wave()))
+                    .map(optionLogicElement -> String.format(
+                            "\t\t\t\t%s.%s();\n",
+                            optionLogicElement.getEnclosingElement().getSimpleName().toString(),
+                            optionLogicElement.getSimpleName().toString())
+                    )
+                    .collect(Collectors.joining())
+                    +
+                    roundEnv.getElementsAnnotatedWith(OnOptionSelect.class).stream().filter(element -> {
+                                OnOptionSelect annotation = element.getAnnotation(OnOptionSelect.class);
+                                return annotation.menu().equals(menuName) && annotation.option().equals(optionElement.getSimpleName().toString());
+                            }).map(optionLogicElement -> String.format(
+                                    "\t\t\t\t%s.%s();\n",
+                                    optionLogicElement.getEnclosingElement().getSimpleName().toString(),
+                                    optionLogicElement.getSimpleName().toString())
+                            )
+                            .collect(Collectors.joining());
+
+        }
+
+
+        private static <T extends Element> String getPressEnterString(TypeElement menuElement, T optionElement, boolean usingPrintOverride) {
+            return optionElement.getAnnotation(PressEnterToContinue.class) != null ?
+                    String.format(
+                            "\t\t\t\t%s.print(%s);\n\t\t\t\tscanner.nextLine();",
                             usingPrintOverride ?
-                                    roundEnv.getElementsAnnotatedWith(PrintOverride.class).stream().findFirst().get().getSimpleName().toString() :
+                                    roundEnv.getElementsAnnotatedWith(PrintOverride.class).stream()
+                                            .findFirst().get()
+                                            .getSimpleName().toString() :
                                     "System.out",
-                            option.key(),
-                            option.delimiter(),
+
+                            menuElement.getEnclosedElements().stream()
+                                    .filter(element -> element.getAnnotation(PressEnterPrompt.class) != null)
+                                    //TODO: Implement alternative prompt
+                                    .findFirst().map(element -> element.getSimpleName().toString())
+                                    .orElse("\"Press Enter to Continue\"")
+                    ) : "";
+        }
+
+
+        private static <T extends Element> String getNextMenuString(T optionElement) {
+            NextMenu next = optionElement.getAnnotation(NextMenu.class);
+            return next != null ? String.format("\t\t\t\treturn \"%s\";", next.nextMenu()) : "\t\t\t\t//Return To Same Menu";
+        }
+
+
+        private static String getMenuHeader(TypeElement menuElement, String menuName, boolean usingPrintOverride) {
+            return menuElement.getEnclosedElements().stream()
+                    .filter(element -> element.getAnnotation(Header.class) != null)
+                    .findFirst().map(element -> String.format(
+                            "\t\t%s.print(%s.%s + \"\\n\");",
+                            usingPrintOverride ?
+                                    roundEnv.getElementsAnnotatedWith(PrintOverride.class).stream()
+                                            .findFirst().get()
+                                            .getSimpleName().toString() :
+                                    "System.out",
                             menuName,
                             element.getSimpleName().toString()
-                    );
-                }).collect(Collectors.joining());
-    }
-    private static String getWhitSpaceString(TypeElement menuElement, boolean usingPrintOverride){
-        WhiteSpace ws = menuElement.getAnnotation(WhiteSpace.class);
-        if(ws != null){
-            return String.format(
-                    "\t\t%s.print(\"\\n\".repeat(%s));",
-                    usingPrintOverride ?
-                            roundEnv.getElementsAnnotatedWith(PrintOverride.class).stream()
-                                .findFirst()
-                                .get()
-                                .getSimpleName()
-                                .toString() :
-                            "System.out",
-                    ws.value()
-            );
+                    )).orElse("");
         }
-        return "";
-    }
-
-    private static String getOnMenuLoadString(String menuName) {
-        //Repeated
-        return roundEnv.getElementsAnnotatedWith(OnMenuLoads.class).stream()
-                //Filter annotations relevant to menu
-                .filter(element -> Arrays.stream(element.getAnnotation(OnMenuLoads.class).value()).anyMatch(onMenuLoad -> onMenuLoad.menu().equals(menuName)))
-                //Sort by menu wave
-                .sorted(Comparator.comparing(element -> Arrays.stream(element.getAnnotation(OnMenuLoads.class).value()).filter(onMenuLoad -> onMenuLoad.menu().equals(menuName)).findFirst().get().wave()))
-                .map(onLoadElement -> String.format("\t\t%s.%s();\n", onLoadElement.getEnclosingElement().getSimpleName().toString(), onLoadElement.getSimpleName().toString()))
-                .collect(Collectors.joining())+ roundEnv.getElementsAnnotatedWith(OnMenuLoad.class).stream()
-                //Filter annotations relevant to menu
-                .filter(element -> element.getAnnotation(OnMenuLoad.class).menu().equals(menuName))
-                //Sort by menu wave
-                .sorted(Comparator.comparing(element -> element.getAnnotation(OnMenuLoad.class).wave()))
-                .map(onLoadElement -> String.format("\t\t%s.%s();\n", onLoadElement.getEnclosingElement().getSimpleName().toString(), onLoadElement.getSimpleName().toString()))
-                .collect(Collectors.joining());
-
-    }
-
-
-    private static String getCasesString(TypeElement menuElement, String menuName, boolean usingPrintOverride){
-        return menuElement.getEnclosedElements().stream()
-                .filter(element -> element.getAnnotation(MenuOption.class) != null)
-                .map(optionElement -> {
-                    MenuOption option = optionElement.getAnnotation(MenuOption.class);
-                    return String.format(
-                            "\n\t\t\tcase \"%s\" -> {\n%s\n%s\n%s\n\t\t\t}",
-                            option.key(),
-                            getOptionSelectString(optionElement, menuName),
-                            getPressEnterString(menuElement, optionElement, usingPrintOverride),
-                            getNextMenuString(optionElement)
-                    );
-                }).collect(Collectors.joining());
-    }
-
-
-    private static<T extends Element> String getOptionSelectString(T optionElement, String menuName){
-                return roundEnv.getElementsAnnotatedWith(OnOptionSelects.class).stream()
-                        .filter(element -> {
-                            OnOptionSelects annotation = element.getAnnotation(OnOptionSelects.class);
-                            return Arrays.stream(annotation.value()).anyMatch(onOptionSelect -> onOptionSelect.menu().equals(menuName) && onOptionSelect.option().equals(optionElement.getSimpleName().toString()));})
-                        .sorted(Comparator.comparing(element -> Arrays.stream(element.getAnnotation(OnOptionSelects.class).value()).filter(onOptionSelect -> onOptionSelect.menu().equals(menuName) && onOptionSelect.option().equals(optionElement.getSimpleName().toString())).findFirst().get().wave()))
-                        .map(optionLogicElement -> String.format(
-                                "\t\t\t\t%s.%s();\n",
-                                optionLogicElement.getEnclosingElement().getSimpleName().toString(),
-                                optionLogicElement.getSimpleName().toString())
-                        )
-                        .collect(Collectors.joining())
-                        +
-                        roundEnv.getElementsAnnotatedWith(OnOptionSelect.class).stream().filter(element -> {
-                    OnOptionSelect annotation = element.getAnnotation(OnOptionSelect.class);
-                    return annotation.menu().equals(menuName) && annotation.option().equals(optionElement.getSimpleName().toString());
-                }).map(optionLogicElement -> String.format(
-                                "\t\t\t\t%s.%s();\n",
-                                optionLogicElement.getEnclosingElement().getSimpleName().toString(),
-                                optionLogicElement.getSimpleName().toString())
-                        )
-                        .collect(Collectors.joining());
-
-    }
-
-
-    private static<T extends Element> String getPressEnterString(TypeElement menuElement, T optionElement, boolean usingPrintOverride){
-        return optionElement.getAnnotation(PressEnterToContinue.class) != null ?
-                String.format(
-                        "\t\t\t\t%s.print(%s);\n\t\t\t\tscanner.nextLine();",
-                    usingPrintOverride?
-                        roundEnv.getElementsAnnotatedWith(PrintOverride.class).stream()
-                                .findFirst().get()
-                                .getSimpleName().toString():
-                        "System.out",
-
-                    menuElement.getEnclosedElements().stream()
-                            .filter(element -> element.getAnnotation(PressEnterPrompt.class) != null)
-                            //TODO: Implement alternative prompt
-                            .findFirst().map(element -> element.getSimpleName().toString())
-                            .orElse("\"Press Enter to Continue\"")
-                ): "";
-    }
-
-
-    private static<T extends Element> String getNextMenuString(T optionElement){
-        NextMenu next = optionElement.getAnnotation(NextMenu.class);
-        return next != null ? String.format("\t\t\t\treturn \"%s\";", next.nextMenu()):"\t\t\t\t//Return To Same Menu";
-    }
-
-
-    private static String getMenuHeader(TypeElement menuElement, String menuName, boolean usingPrintOverride){
-        return menuElement.getEnclosedElements().stream()
-                .filter(element -> element.getAnnotation(Header.class) != null)
-                .findFirst().map(element -> String.format(
-                        "\t\t%s.print(%s.%s + \"\\n\");",
-                        usingPrintOverride?
-                                roundEnv.getElementsAnnotatedWith(PrintOverride.class).stream()
-                                        .findFirst().get()
-                                        .getSimpleName().toString():
-                                "System.out",
-                        menuName,
-                        element.getSimpleName().toString()
-                        )).orElse("");
     }
 }

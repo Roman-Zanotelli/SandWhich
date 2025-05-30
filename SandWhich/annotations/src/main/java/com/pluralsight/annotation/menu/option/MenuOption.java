@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface MenuOption {
     String key();
-    int order();
+    double order();
     String delimiter() default " - ";
     String overrideName() default "";
 }
