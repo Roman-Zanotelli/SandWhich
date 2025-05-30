@@ -26,5 +26,5 @@ public class SandwichSizeMenu {
     public static String cancel = "Cancel";
 
     @Header
-    public static final String header = "--- Sandwhich? Size ---";
+    public static final String header = "--- SandWhich? Size ---";
 }

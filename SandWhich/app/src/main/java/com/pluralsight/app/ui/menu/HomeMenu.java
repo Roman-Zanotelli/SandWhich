@@ -20,5 +20,5 @@ public class HomeMenu {
     public static final String prompt = "Please Enter Option >> ";
 
     @Header
-    public static final String header = "--- Home Screen ---";
+    public static final String header = "--- Welcome to SandWhich?! ---";
 }

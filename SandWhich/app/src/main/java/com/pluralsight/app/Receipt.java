@@ -49,7 +49,7 @@ public class Receipt {
             String timeStamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-hhmmss"));
             File recieptFile = receiptFolder.resolve(timeStamp + ".txt").toFile();
             BufferedWriter writer = new BufferedWriter(new FileWriter(recieptFile));
-            writer.append("Time - ").append(timeStamp).append("\n");
+            writer.append("Time - ").append(timeStamp);
             //Append each item onto the file
             items.forEach(item -> {
                 try {

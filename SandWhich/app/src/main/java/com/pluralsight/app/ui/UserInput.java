@@ -1,5 +1,6 @@
 package com.pluralsight.app.ui;
 
+import com.pluralsight.annotation.system.OnShutDown;
 import com.pluralsight.annotation.system.ScannerProducer;
 import com.pluralsight.app.ingredient.ChipSelection;
 import com.pluralsight.app.ingredient.DrinkSelection;
@@ -297,8 +298,6 @@ public final class UserInput {
         }while (selection < -1 || selection >= items.size());
         return selection;
     }
-
-
 
     public static Scanner getScanner(){
         return scanner;

@@ -24,12 +24,12 @@ public final class Sandwich extends Item {
 
     @Override
     public String toString() {
-        return  String.format("%s%s\n%s", isToasted ? "Toasted " :"", super.toString(), ingredientSelections.stream()
+        return  String.format("%s%s%s", isToasted ? "Toasted " :"", super.toString(), ingredientSelections.stream()
                 //Option to sort by Ingredient Price
                 //.sorted(Comparator.comparing(ingredient -> ingredient.getPrice(size)))
                 //Option to sort by Ingredient Name
                 .sorted(Comparator.comparing(Object::toString))
-                .map(ingredient -> String.format("\t%s - $%.2f\n", ingredient.toString().replace("_", " "), ingredient.getPrice(size))).collect(Collectors.joining()));
+                .map(ingredient -> String.format("\n\t%s - $%.2f", ingredient.toString().replace("_", " "), ingredient.getPrice(size))).collect(Collectors.joining()));
     }
 
     public void removeCheese(String cheese){

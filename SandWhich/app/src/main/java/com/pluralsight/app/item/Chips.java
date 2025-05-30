@@ -11,7 +11,7 @@ public class Chips extends Item{
     }
     @Override
     public String toString() {
-        return String.format("%s - $%.2f", this.name, this.getPrice());
+        return String.format("%s Chips - $%.2f", this.name, this.getPrice());
     }
 
     public void changeFlavor(String name){

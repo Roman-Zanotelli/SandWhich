@@ -13,7 +13,7 @@ public class OrderMenu {
 
     @NextMenu(nextMenu = "SandwichSizeMenu")
     @MenuOption(key = "1", order = 0) @PressEnterToContinue
-    public static final String add_sandwich = "Add Sandwich";
+    public static final String add_sandwich = "Add SandWhich?";
 
     @NextMenu(nextMenu = "DrinkSizeMenu")
     @MenuOption(key = "2", order = 1) @PressEnterToContinue
@@ -37,8 +37,8 @@ public class OrderMenu {
     @Header
     public static final String header = "--- Order Menu ---";
 
-    //@PressEnterToContinue
-    //@MenuOption(key = "S", order = 3.1) @NextMenu(nextMenu = "Specials")
+    @PressEnterToContinue
+    @MenuOption(key = "S", order = 3.1) @NextMenu(nextMenu = "Specials")
     public static final String add_special = "Add Specialty Sandwich";
 
 }

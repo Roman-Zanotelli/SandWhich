@@ -125,8 +125,7 @@ public final class Cart {
 
 
     //Clear cart
-    @OnOptionSelect(menu = "OrderMenu", option = "cancel_order")
-    @OnOptionSelect(menu = "CheckOutMenu", option = "cancel_order")
+    @OnMenuLoad(menu = "HomeMenu")
     public static void clear(){
         items.clear();
     }

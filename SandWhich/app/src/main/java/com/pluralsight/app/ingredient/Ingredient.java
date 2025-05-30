@@ -3,10 +3,11 @@ package com.pluralsight.app.ingredient;
 import com.pluralsight.app.item.Size;
 
 public interface Ingredient {
+
     double getPrice(Size size);
 
     interface Premium {
-        public enum Meat implements Ingredient{
+        enum Meat implements Ingredient{
             Steak, Ham, Salami, Roast_Beef, Chicken, Bacon;
 
             @Override
@@ -19,7 +20,7 @@ public interface Ingredient {
             }
         }
 
-        public enum Cheese implements Ingredient{
+        enum Cheese implements Ingredient{
             American, Provolone, Cheddar, Swiss;
 
             @Override
@@ -31,7 +32,8 @@ public interface Ingredient {
                 };
             }
         }
-        public enum ExtraCheese implements Ingredient{
+
+        enum ExtraCheese implements Ingredient{
             American, Provolone, Cheddar, Swiss;
 
             @Override
@@ -43,7 +45,8 @@ public interface Ingredient {
                 };
             }
         }
-        public enum ExtraMeat implements Ingredient{
+
+        enum ExtraMeat implements Ingredient{
             Steak, Ham, Salami, Roast_Beef, Chicken, Bacon;
 
             @Override
@@ -56,7 +59,7 @@ public interface Ingredient {
             }
         }
 
-        public enum Bread implements Ingredient{
+        enum Bread implements Ingredient{
             White_Bread, Wheat_Bread, Rye_Bread, Wrap;
 
             @Override
