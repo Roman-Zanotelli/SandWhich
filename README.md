@@ -1,2 +1,2 @@
-# SandWhich
-SandWhich? The Sandwich Shop. (Using Java Build Annotations)
+﻿# SandWhich
+SandWhich? The Sandwich Shop. (Using Java Build Annotations & Code Generation)
