@@ -37,4 +37,19 @@ public class Test {
     public static void testt(){
         ArrayList<String> inputs = new ArrayList<>(Arrays.asList("a", "b", "c"));
     }
+
+
+    public static void hahahahahahahahahaha(){
+        UserOutput.display("ahahahahahahahahahahahahahahahahahahahaha");
+    }
+
+    public static void hahahahahahahahahaha2(){
+        UserOutput.display("ahahahahahahahahahahahahahahahahahahahaha");
+    }
+
+    public static void hahahahahahahahahaha3(){
+        UserOutput.display("ahahahahahahahahahahahahahahahahahahahaha");
+    }
+
+
 }
