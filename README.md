@@ -39,16 +39,27 @@ While the business logic is intentionally simple (ordering sandwiches and managi
 - Applying Java’s compile-time tooling to fully functioning project
 
 ## ScreenShots
-Project Code w/ Annotations:
+### Project Code w/ Annotations:
 
 <img width="1377" height="980" alt="ExampleOrderMenu" src="https://github.com/user-attachments/assets/81beb764-22d9-4870-b701-4ec63c795880" />
 
-Example @OnLoad Usage:
+### Example @OnLoad Usage:
+
 <img width="712" height="270" alt="ExampleOnLoad" src="https://github.com/user-attachments/assets/511adc33-94d5-4461-9503-fea236648db0" />
 
-Example @OnSelect Usage:
-<img width="710" height="441" alt="GeneratedOnSelectExample" src="https://github.com/user-attachments/assets/5b4d9dd5-93ce-49fb-9b3d-1e8c10825278" />
+### Example @OnSelect Usage:
 
-Generated Code (2 part):
+<img width="649" height="361" alt="OnOptionSelectExample" src="https://github.com/user-attachments/assets/40831066-eff0-4828-973c-abae57bd8ff8" />
+
+
+### Generated Code (2 part):
+
 <img width="699" height="942" alt="ExampleGeneratedOrderMenu" src="https://github.com/user-attachments/assets/7ea93ad1-f2ee-4ca8-8392-11ef645cb266" />
 <img width="710" height="441" alt="GeneratedOnSelectExample" src="https://github.com/user-attachments/assets/4471f1de-4419-4c15-b86e-876000245210" />
+
+
+### Menu Generator (snippet)
+<img width="808" height="939" alt="MenuGenerator" src="https://github.com/user-attachments/assets/a41006a1-fa59-4e86-8c10-6a18058b0f20" />
+more code inside project
+
+
