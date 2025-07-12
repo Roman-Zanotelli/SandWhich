@@ -60,6 +60,7 @@ While the business logic is intentionally simple (ordering sandwiches and managi
 
 ### Menu Generator (snippet)
 <img width="808" height="939" alt="MenuGenerator" src="https://github.com/user-attachments/assets/a41006a1-fa59-4e86-8c10-6a18058b0f20" />
-more code inside project
+
+**read more code inside project under expresso-processor sub-module**
 
 
