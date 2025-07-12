@@ -63,4 +63,10 @@ While the business logic is intentionally simple (ordering sandwiches and managi
 
 **read more code inside project under expresso-processor sub-module**
 
+# 🤖 AI Assistance Acknowledgment
+
+Parts of this README were created with assistance from [ChatGPT by OpenAI](https://openai.com/chatgpt) to help organize ideas and improve clarity
+
+> ⚖️ **Ethical Use Statement**: I believe in responsible and transparent use of AI tools. While AI helped shape structure and language of the readme, all architectural decisions, implementation, and final content reflect my own understanding, judgment, and intent.
+
 
