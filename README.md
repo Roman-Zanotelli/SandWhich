@@ -1,7 +1,7 @@
 # 🥪 SandWhich (Archived)
 
 **SandWhich?** *The Sandwich Shop.*  
-A playful, project showcasing **Java build annotations** and **code generation**, built for a final.
+A playful, project showcasing **Java build annotations** and **code generation**
 
 This project was created in 5-7 days with no prior planning knowledge, the goal was just to "build a sandwhich shop CLI" but i decided to take the intitave to extend it was beyond that.
 
