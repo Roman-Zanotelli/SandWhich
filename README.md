@@ -3,7 +3,7 @@
 **SandWhich?** *The Sandwich Shop.*  
 A playful, project showcasing **Java build annotations** and **code generation**
 
-This project was created in 5-7 days with no prior planning knowledge, the goal was just to "build a sandwhich shop CLI" but i decided to take the intitave to extend it was beyond that.
+This project was created in 5-7 days with no prior planning or knowledge, the goal was just to "build a sandwhich shop CLI" but i decided to take the intitave to extend it beyond that.
 
 This project automatically scans imports and generates code including range-bounded switch cases, user/menu interaction loops, and a semi-flushed out Annotation system to generate your own menus
 
